@@ -30,7 +30,7 @@ def remove_text_inside_brackets(text, brackets="()[]"):
         else:  # character is not a bracket
             if not any(count):  # outside brackets
                 saved_chars.append(character)
-    return ''.join(saved_chars)
+    return ''.join([str(_) for _ in saved_chars])
 
 
 def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
