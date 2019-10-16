@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/anaconda3/bin/python
 
 import mechanize as mechanize
 import ase.io
