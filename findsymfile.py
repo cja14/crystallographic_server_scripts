@@ -1,7 +1,8 @@
-#!/anaconda3/bin/python
+#!/usr/bin/python
 
 import mechanize as mechanize
-import ase.io
+# import ase.io
+from casase import casread
 br = mechanize.Browser()
 
 """
@@ -11,28 +12,6 @@ python findsymfile.py structure.cell tol=0.001 > output.cif
 
 """
 
-
-def remove_text_inside_brackets(text, brackets="()[]"):
-    """
-    Stolen unashamedly from:
-    http://stackoverflow.com/questions/14596884/remove-text-between-and-in-python
-    """
-    count = [0] * (len(brackets) // 2)  # count open/close brackets
-    saved_chars = []
-    for character in text:
-        for i, b in enumerate(brackets):
-            if character == b:  # found bracket
-                kind, is_close = divmod(i, 2)
-                count[kind] += (-1)**is_close  # `+1`: open, `-1`: close
-                if count[kind] < 0:  # unbalanced bracket
-                    count[kind] = 0
-                break
-        else:  # character is not a bracket
-            if not any(count):  # outside brackets
-                saved_chars.append(character)
-    return ''.join([str(_) for _ in saved_chars])
-
-
 def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
                    index=None, format=None):
     """
@@ -40,7 +19,7 @@ def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
     Returns a cif of the high symmetry structure
     """
     # atoms = ase.io.read(filename, index=index, format=format)
-    atoms = ase.io.read(filename)
+    atoms = casread(filename)
     n = len(atoms)
     elems = ' '.join(atoms.get_chemical_symbols())
     cell = atoms.get_cell()
@@ -66,7 +45,8 @@ def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
     response = br.submit()
     cifstart = '# CIF file created by FINDSYM'
     cifend = '# end of cif'
-    output = remove_text_inside_brackets(response.read())
+    # output = remove_text_inside_brackets(response.read())
+    output = response.read().decode('utf-8')
     return output[output.index(cifstart):output.index(cifend)+len(cifend)]
 
 

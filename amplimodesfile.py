@@ -34,7 +34,7 @@ def scrape_amplimodes(HSfile, LSfile, verbose=False):
     # Page 1: Select high-sym and low-sym cif files -> click "Calculate..."
     if verbose:
         print('\n\n\nPage 1\n')
-        print(response.read())
+        print(response.read().decode('utf-8'))
     br.form = list(br.forms())[1]
     br.form.find_control('cifile1').add_file(open(HSfile),
                                              'text/plain', HSfile)
@@ -50,24 +50,24 @@ def scrape_amplimodes(HSfile, LSfile, verbose=False):
     # Page 2: Verify BCS representation of cif file -> click "Calculate..."
     if verbose:
         print('\n\n\nPage 2\n')
-        print(response.read())
+        print(response.read().decode('utf-8'))
     br.form = list(br.forms())[0]
     response = br.submit()
 
     # Page 3: Loaded strucs -> click "Find compatable transformation matrices"
     if verbose:
         print('\n\n\nPage 3\n')
-        print(response.read())
+        print(response.read().decode('utf-8'))
     br.form = list(br.forms())[0]
     response = br.submit()
 
     # Page 4: Found Strucutre relations -> click "analyze via amplimodes"
     if verbose:
         print('\n\n\nPage 4\n')
-        print(response.read())
+        print(response.read().decode('utf-8'))
     br.form = list(br.forms())[1]
     response = br.submit()
-    html = str(response.read())
+    html = str(response.read().decode('utf-8'))
 
     # Possible Page 4b (only if structure is polar)
     if ('The distorted structure is polar' in html and
@@ -77,7 +77,7 @@ def scrape_amplimodes(HSfile, LSfile, verbose=False):
             print(html)
         br.form = list(br.forms())[0]
         response = br.submit()
-        html = str(response.read())
+        html = str(response.read().decode('utf-8'))
 
     # Page 5: Sym mode analysis -> DON'T HAVE TO click "Detailed information"!
     # (it is not a different page, if you open the html you will have to)
