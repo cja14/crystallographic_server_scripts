@@ -4,11 +4,6 @@
 	0.00000000	0.00000000	19.40080690
 %ENDBLOCK LATTICE_CART
 
-%BLOCK cell_constraints
-	1	1	3
-	0	0	0
-%ENDBLOCK cell_constraints
-
 %BLOCK POSITIONS_FRAC
 	O	0.00000000	0.00000000	0.00000000
 	O	0.50000000	0.50000000	0.50000000
@@ -35,17 +30,3 @@
 	Ti	0.50000000	0.50000000	0.39909000
 	Ti	0.50000000	0.50000000	0.60091000
 %ENDBLOCK POSITIONS_FRAC
-
-kpoints_mp_grid = 7 7 1
-kpoints_mp_offset = 0.0714285714286 0.0714285714286 0.5
-
-%block species_pot
-	Ca Ca_OTF_E1650_PBEsol_NC.usp
-	O O_OTF_E1650_PBEsol_NC.usp
-	Ti Ti_OTF_E1650_PBEsol_NC.usp
-%endblock species_pot
-
-symmetry_generate
-
-snap_to_symmetry
-

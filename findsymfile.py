@@ -12,6 +12,7 @@ python findsymfile.py structure.cell tol=0.001 > output.cif
 
 """
 
+
 def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
                    index=None, format=None):
     """
