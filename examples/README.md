@@ -82,3 +82,35 @@ In the previous exercise, we had the high and low-symmetry crystal structures an
 
 https://stokes.byu.edu/iso/isodistort.php
 
+Isodistort is significantly more complicated because there is a lot more freedom (you can freeze any distortion you like into the structure). Therefore, this exercise we will do only from within python.
+
+```python
+import os
+from isodistortfile import isodistort
+HSfile = os.getcwd()+'/Ca3Ti2O7_I4mmm.cif'
+iso = isodistort(HSfile, silent=True)
+```
+
+Now we have set up the object that interacts with the isodistort wesbite. In the above code, silent is set to True. If silent is False, then a firefox GUI window will be launched so you can watch the code clicking through steps on the website.
+
+Now we want to choose which irreps to input. Let's say that we want to create another A21am child structure (space group 36), we need irreps X2+ and X3-:
+
+```python
+irreps = ['X2+', 'X3-']
+iso.choose_by_irreps(irreps)
+print(iso.view_space_groups())
+SG = 36
+iso.select_space_group(SG)
+```
+
+Now we input the distortions and download the distorted cif file. Note that in the first step we view the allowed distortion modes so these need not be known apriori:
+
+```python
+print(iso.view_modes())
+amplitudes = {'X2+': [0.5, 0],
+              'X3-': [0.1, 0.2, 0.4, 0.05, 0, 0],
+              'GM4+': [0.3]}
+outputfile = 'Ca3Ti2O7_A21am_2.cif'
+iso.set_amplitudes(outputfile, amplitudes)
+iso.close()
+```
