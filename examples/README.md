@@ -56,9 +56,9 @@ _J.M. Perez-Mato, D. Orobengoa and M.I. Aroyo. "Mode Crystallography of distorte
 
 Let us first describe the Amam structure in terms of distortions of the parent I4/mmm phase. As before, there are two ways of automating interactions with amplimodes. From a command line, type the following:
 
-"""bash
+```bash
 python amplimodesfile.py Ca3Ti2O7_I4mmm.cif Ca3Ti2O7_Amam.cif > Ca3Ti2O7_Amam_amplimodes.html
-"""
+```
 
 This will automatically click through all the steps on the amplimodes website and save a copy of the final page of the process as an .html file. Try opening this file using your favourite browser to inspect the output.
 
@@ -66,11 +66,11 @@ The function associated with this script can also be imported and used within py
 
 To automate extraction of important data from these html files, I have written another script _analyse_amplimodes_html.py_. Let's perform this next step from within python. Open python and type the following lines:
 
-"""python
+```python
 from analyse_amplimodes_html import extract_modes
 htmlfile = 'Ca3Ti2O7_Amam_amplimodes.html'
 summary, displ_tabs = extract_modes(htmlfile)
-"""
+```
 
 You now have two objects, _summary_ and _displ_tabs_ . The former is a pandas dataframe that gives a summary of the amplitudes and irrep of each distortion. The latter is a list of dataframes corresponding to each of the irreps. Each dataframe gives the displacement vector associated with each irrep.
 
