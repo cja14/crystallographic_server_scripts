@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import mechanize as mechanize
 
 br = mechanize.Browser()

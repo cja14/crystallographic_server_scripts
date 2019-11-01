@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import pandas as pd
 
 """
@@ -28,14 +26,14 @@ def extract_modes(htmlfile, primnorm=False):
             tab.columns = tab.iloc[0]
             tab = tab[1:]
             tables[i] = tab  # not sure if this is actually necessary
-
+    
     # Table summarising all irreps (note: u'Amplitude (\xc5)' for Amp column)
     sum_idxs = [i for i, _tab in enumerate(tables) if 'K-vector' in _tab]
     if primnorm:
         summary = tables[sum_idxs[1]]
     else:
         summary = tables[sum_idxs[0]]
-
+    
     # Displacement vectors (in terms of Wyckoff posns)
     # This part gets quite hacky
     displ_idxs = [i + sum_idxs[1] + 1 for i, tab in

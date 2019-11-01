@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import mechanize as mechanize
 # import ase.io
 from casase import casread

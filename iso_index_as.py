@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 import sys
 from isodistortfile import isodistort

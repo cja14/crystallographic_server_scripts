@@ -40,7 +40,7 @@ open('Ca3Ti2O7_I4mmm_2.cif').write(ciffile)
 
 This should have created a file _Ca3Ti2O7_I4mmm_2.cif_ that is identical to _Ca3Ti2O7_I4mmm.cif_. 
 
-Repeat the above procedure on the _Ca3Ti2O7_P42mnm.cell_ and _Ca3Ti2O7_A21am.cell_ structures to create cif files names _Ca3Ti2O7_P42mnm.cif_ and _Ca3Ti2O7_A21am.cif_.
+Repeat the above procedure on the _Ca3Ti2O7_Amam.cell_ and _Ca3Ti2O7_A21am.cell_ structures to create cif files names _Ca3Ti2O7_Amam.cif_ and _Ca3Ti2O7_A21am.cif_.
 
 
 
@@ -50,13 +50,35 @@ Now that we have created cif files and found the space group symmetries of all s
 
 http://www.cryst.ehu.es/cryst/amplimodes.html
 
-_ D. Orobengoa, C. Capillas, M.I. Aroyo & J.M. Perez-Mato J. Appl. Cryst. (2009) 42, 820-833._
+_D. Orobengoa, C. Capillas, M.I. Aroyo & J.M. Perez-Mato J. Appl. Cryst. (2009) 42, 820-833._
 
 _J.M. Perez-Mato, D. Orobengoa and M.I. Aroyo. "Mode Crystallography of distorted structures". Acta Cryst A (2010) 66 558-590_
+
+Let us first describe the Amam structure in terms of distortions of the parent I4/mmm phase. As before, there are two ways of automating interactions with amplimodes. From a command line, type the following:
+
+"""bash
+python amplimodesfile.py Ca3Ti2O7_I4mmm.cif Ca3Ti2O7_Amam.cif > Ca3Ti2O7_Amam_amplimodes.html
+"""
+
+This will automatically click through all the steps on the amplimodes website and save a copy of the final page of the process as an .html file. Try opening this file using your favourite browser to inspect the output.
+
+The function associated with this script can also be imported and used within python. By inspecting the script see if you can do this to analyse the modes of the file _Ca3Ti2O7_A21am.cif_ .
+
+To automate extraction of important data from these html files, I have written another script _analyse_amplimodes_html.py_. Let's perform this next step from within python. Open python and type the following lines:
+
+"""python
+from analyse_amplimodes_html import extract_modes
+htmlfile = 'Ca3Ti2O7_Amam_amplimodes.html'
+summary, displ_tabs = extract_modes(htmlfile)
+"""
+
+You now have two objects, _summary_ and _displ_tabs_ . The former is a pandas dataframe that gives a summary of the amplitudes and irrep of each distortion. The latter is a list of dataframes corresponding to each of the irreps. Each dataframe gives the displacement vector associated with each irrep.
 
 
 
 # Isodistort - freeze distortions into a high-symmetry structure
+
+In the previous exercise, we had the high and low-symmetry crystal structures and we used amplimodes to find the distortions that relate these phases. In this exercise we are going to approach the problem from the other direction: we will use isodistort to freeze distortions into our high-symmetry phase and create a low-symmetry child structure.
 
 https://stokes.byu.edu/iso/isodistort.php
 
