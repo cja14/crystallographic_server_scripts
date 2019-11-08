@@ -15,5 +15,5 @@ There are four main scripts to this repository:
 
 Additionally, _casase.py_ provides a wrapper to load structures using the _ase_ (atomic simulation enviroment) and _iso_index_as.py_ provides a command line script to easily convert a .cif file to a lower symmetry setting. This has been found to be important when comparing the amplitudes of modes from structures with different symmetries using amplimodes.
 
-** It is recommended to familiarise yourself with these scripts that you take a look at the tutorial in the _examples/_ directory.**
+**It is recommended to familiarise yourself with these scripts that you take a look at the tutorial in the _examples/_ directory.**
 
