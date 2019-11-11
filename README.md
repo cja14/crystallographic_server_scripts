@@ -2,9 +2,18 @@
 A collection of python scripts to interface with tools available on crystallographic web servers (Isotropy Software Suite/Bilbao Crystallographic Server).
 
 
-Requirements:
+## Requirements
+
 * python (scripts should work with both versions 2.7 and 3.5)
-* the following modules installed: numpy, pandas, ase, mechanize, selenium
+* the following modules installed: _numpy_, _pandas_, _ase_, _mechanize_, _selenium_
+
+The isodistortfile.py script uses the selenium module to interact with the website (whereas the other scripts use mechanize). To work, selenium needs to use a browser (as setup, the scripts use firefox) and therefore the browser needs to be installed and selenium needs to have access to an appropriate driver file.
+
+After installing selenium package, I had to download geckodriver from:
+https://github.com/mozilla/geckodriver/releases
+and then add the directory where I had saved the geckodriver file to my path.
+
+## Summary
 
 There are four main scripts to this repository:
 
