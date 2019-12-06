@@ -35,7 +35,7 @@ This same operation may also be performed from within python. Again from within 
 ```python
 from findsymfile import scrape_findsym
 ciffile = scrape_findsym('Ca3Ti2O7_I4mmm.cell', tol=0.001)
-open('Ca3Ti2O7_I4mmm_2.cif').write(ciffile)
+open('Ca3Ti2O7_I4mmm_2.cif', 'w').write(ciffile)
 ```
 
 This should have created a file _Ca3Ti2O7_I4mmm_2.cif_ that is identical to _Ca3Ti2O7_I4mmm.cif_. 

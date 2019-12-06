@@ -10,7 +10,6 @@ from selenium.common.exceptions import NoSuchElementException
 After installing selenium package, I had to download geckodriver from:
 https://github.com/mozilla/geckodriver/releases
 and then add the directory where I had saved the geckodriver file to my path
-export PATH=$PATH:/home/cja14/Software/firefox
 """
 
 
