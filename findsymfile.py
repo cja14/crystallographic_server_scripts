@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 import mechanize as mechanize
-# import ase.io
 from casase import casread
+
 br = mechanize.Browser()
+br.set_handle_robots(False)
 
 """
 Example:
