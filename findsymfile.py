@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
+
 import mechanize as mechanize
-# import ase.io
 from casase import casread
 br = mechanize.Browser()
 
@@ -26,6 +27,11 @@ def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
     posns = atoms.get_scaled_positions()
     positions = [' '.join([str(p) for p in posns[i, :]])+'\r\n'
                  for i in range(n)]
+    spins = atoms.get_magnetic_moments()
+    print("positions: ", positions)
+    print("posns: ", posns)
+    print("spins: ", spins)
+
 
     # Interacting with findsym websiteb
     br.open('http://stokes.byu.edu/iso/findsym.php')

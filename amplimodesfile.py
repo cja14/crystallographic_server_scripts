@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import mechanize as mechanize
 
 br = mechanize.Browser()
@@ -63,6 +65,7 @@ def scrape_amplimodes(HSfile, LSfile, verbose=False):
     if verbose:
         print('\n\n\nPage 4\n')
         print(response.read().decode('utf-8'))
+    print(list(br.forms()))
     br.form = list(br.forms())[1]
     response = br.submit()
     html = str(response.read().decode('utf-8'))
