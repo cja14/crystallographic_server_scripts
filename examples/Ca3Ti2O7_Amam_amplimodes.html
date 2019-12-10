@@ -1,0 +1,236 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>Symmetry mode analysis</title>
+<link rev="made" href="mailto:danel.orobengoa%40ehu.es" />
+<link rel="stylesheet" type="text/css" href="/html/css/bcs_style.css" />
+<script type="text/javascript">//<![CDATA[
+function muestra() {
+  var elemento = document.getElementById("adicional");
+    elemento.style.display = "inline";
+     
+  var enlace = document.getElementById("enlace");
+    enlace.style.display = "none";
+}
+function toggle(el) {
+  var elemento = document.getElementById(el);
+  if (elemento.style.display == "inline"){
+    elemento.style.display = "none";
+  } else {
+    elemento.style.display = "inline";
+  }
+}
+
+//]]></script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body bgcolor="#ffffff">
+<table width="100%">
+  <tr>
+    <td bgcolor="#dddddd">
+      <small>
+        <a href="/">Bilbao Crystallographic Server</a> <img src="/html/gif/a.gif" alt="arrow"> Symmetry mode analysis
+      </small>
+    </td>
+    <td bgcolor="#dddddd">
+      <small> 
+        <a href="Help">Help</a> 
+      </small>
+   </td>
+  </tr>
+</table>
+<br>
+<h2>Symmetry mode analysis</h2><h3>High symmetry structure</h3><pre>139
+3.8365030000 3.8365030000 19.4008069000 90.0000000000 90.0000000000 90.0000000000
+6
+O	1	2a	0.000000	0.000000	0.000000
+O	2	4e	0.000000	0.000000	0.799860
+O	3	8g	0.000000	0.500000	0.401150
+Ca	1	2b	0.000000	0.000000	0.500000
+Ca	2	4e	0.000000	0.000000	0.685060
+Ti	1	4e	0.000000	0.000000	0.899090
+</pre><h3>Low symmetry structure</h3><pre>63
+19.1334162000 5.4783581000 5.3986206000 90.0000000000 90.0000000000 90.0000000000
+7
+O	1	4c	0.000000	0.168800	0.250000
+O	2	8g	0.801120	0.320230	0.250000
+O	3	8e	0.416680	0.000000	0.000000
+O	4	8e	0.114950	0.000000	0.000000
+Ca	1	4c	0.000000	0.740460	0.250000
+Ca	2	8g	0.686510	0.235340	0.250000
+Ti	1	8g	0.899670	0.246850	0.250000
+</pre><h3>Transformation matrix</h3><pre>[     0     1     1 ] [    1/2]
+[     0    -1     1 ] [      0]
+[     1     0     0 ] [      0]</pre><h3>Transformed high symmetry structure in the subgroup basis</h3>Reference Structure<br><pre>063
+19.400806 5.425635 5.425635 90.000000 90.000000 90.000000
+7
+O	1	4c	0.000000	0.750000	0.750000
+O	2	8g	0.799860	0.750000	0.750000
+O	3	8e	0.401150	0.500000	0.000000
+O	3_2	8e	0.401150	0.000000	0.500000
+Ca	1	4c	0.500000	0.750000	0.750000
+Ca	2	8g	0.685060	0.750000	0.750000
+Ti	1	8g	0.899090	0.750000	0.750000
+</pre><h3>Atom pairings and distances</h3>
+<table border="1" cellspacing="1" cellpadding="3"><tbody><tr><th colspan="6" bgcolor=#bbbbbb>Atom Mappings</th></tr><tr bgcolor=#bbbbbb><th colspan="2">WP</th><th>Atom</th><th>Reference Struc.</th><th>Atom</th><th>Low Sym Struc.</th></tr><tr><td bgcolor=#ffffff rowspan="1" align=center> 4c</td><td bgcolor=#ffffff rowspan="1" align=center>(0,y,1/4)</td><td bgcolor=#ffffff align=center>O1</td><td bgcolor=#ffffff align=center>(0.000000,0.750000,0.750000)</td><td bgcolor=#ffffff align=center>O1</td><td bgcolor=#ffffff align=center>(0.000000,0.831200,0.750000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#eeeeee rowspan="1" align=center> 8g</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#eeeeee align=center>O2</td><td bgcolor=#eeeeee align=center>(0.799860,0.750000,0.750000)</td><td bgcolor=#eeeeee align=center>O2</td><td bgcolor=#eeeeee align=center>(0.801120,0.679770,0.750000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#ffffff rowspan="1" align=center> 8e</td><td bgcolor=#ffffff rowspan="1" align=center>(x,0,0)</td><td bgcolor=#ffffff align=center>O3</td><td bgcolor=#ffffff align=center>(0.401150,0.500000,0.000000)</td><td bgcolor=#ffffff align=center>O4</td><td bgcolor=#ffffff align=center>(0.385050,0.500000,0.000000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#eeeeee rowspan="1" align=center> 8e</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,0,0)</td><td bgcolor=#eeeeee align=center>O3_2</td><td bgcolor=#eeeeee align=center>(0.401150,0.000000,0.500000)</td><td bgcolor=#eeeeee align=center>O3</td><td bgcolor=#eeeeee align=center>(0.416680,0.000000,0.500000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#ffffff rowspan="1" align=center> 4c</td><td bgcolor=#ffffff rowspan="1" align=center>(0,y,1/4)</td><td bgcolor=#ffffff align=center>Ca1</td><td bgcolor=#ffffff align=center>(0.500000,0.750000,0.750000)</td><td bgcolor=#ffffff align=center>Ca1</td><td bgcolor=#ffffff align=center>(0.500000,0.759540,0.750000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#eeeeee rowspan="1" align=center> 8g</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#eeeeee align=center>Ca2</td><td bgcolor=#eeeeee align=center>(0.685060,0.750000,0.750000)</td><td bgcolor=#eeeeee align=center>Ca2</td><td bgcolor=#eeeeee align=center>(0.686510,0.764660,0.750000)</td></tr>
+<tr></tr>
+<tr><td bgcolor=#ffffff rowspan="1" align=center> 8g</td><td bgcolor=#ffffff rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#ffffff align=center>Ti1</td><td bgcolor=#ffffff align=center>(0.899090,0.750000,0.750000)</td><td bgcolor=#ffffff align=center>Ti1</td><td bgcolor=#ffffff align=center>(0.899670,0.753150,0.750000)</td></tr>
+<tr></tr>
+</tbody></table><br/><br/>
+<table border="1" cellspacing="1" cellpadding="3"><tbody><tr><th rowspan="2" colspan="2" bgcolor=#bbbbbb>WP</th><th rowspan="2" bgcolor=#bbbbbb>Atom</th><th colspan="4" bgcolor=#bbbbbb>Atomic Displacements</th></tr><tr><th bgcolor=#bbbbbb>u<sub>x</sub></th><th bgcolor=#bbbbbb>u<sub>y</sub></th><th bgcolor=#bbbbbb>u<sub>z</sub></th><th bgcolor=#bbbbbb>|u|</th></tr><tr><td bgcolor=#ffffff rowspan="1" align=center> 4c</td><td bgcolor=#ffffff rowspan="1" align=center>(0,y,1/4)</td><td bgcolor=#ffffff align=center>O1<td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center> 0.0812 </td><td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center>0.4406</td></tr><tr><td bgcolor=#eeeeee rowspan="1" align=center> 8g</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#eeeeee align=center>O2<td bgcolor=#eeeeee align=center> 0.0013 </td><td bgcolor=#eeeeee align=center> -0.0702 </td><td bgcolor=#eeeeee align=center> 0.0000 </td><td bgcolor=#eeeeee align=center>0.3818</td></tr><tr><td bgcolor=#ffffff rowspan="1" align=center> 8e</td><td bgcolor=#ffffff rowspan="1" align=center>(x,0,0)</td><td bgcolor=#ffffff align=center>O3<td bgcolor=#ffffff align=center> -0.0161 </td><td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center>0.3124</td></tr><tr><td bgcolor=#eeeeee rowspan="1" align=center> 8e</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,0,0)</td><td bgcolor=#eeeeee align=center>O3_2<td bgcolor=#eeeeee align=center> 0.0155 </td><td bgcolor=#eeeeee align=center> 0.0000 </td><td bgcolor=#eeeeee align=center> 0.0000 </td><td bgcolor=#eeeeee align=center>0.3013</td></tr><tr><td bgcolor=#ffffff rowspan="1" align=center> 4c</td><td bgcolor=#ffffff rowspan="1" align=center>(0,y,1/4)</td><td bgcolor=#ffffff align=center>Ca1<td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center> 0.0095 </td><td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center>0.0518</td></tr><tr><td bgcolor=#eeeeee rowspan="1" align=center> 8g</td><td bgcolor=#eeeeee rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#eeeeee align=center>Ca2<td bgcolor=#eeeeee align=center> 0.0014 </td><td bgcolor=#eeeeee align=center> 0.0147 </td><td bgcolor=#eeeeee align=center> 0.0000 </td><td bgcolor=#eeeeee align=center>0.0844</td></tr><tr><td bgcolor=#ffffff rowspan="1" align=center> 8g</td><td bgcolor=#ffffff rowspan="1" align=center>(x,y,1/4)</td><td bgcolor=#ffffff align=center>Ti1<td bgcolor=#ffffff align=center> 0.0006 </td><td bgcolor=#ffffff align=center> 0.0032 </td><td bgcolor=#ffffff align=center> 0.0000 </td><td bgcolor=#ffffff align=center>0.0205</td></tr></tbody></table><br/>
+NOTE: u<sub>x</sub>, u<sub>y</sub> and u<sub>z</sub> are given in relative units. |u| is the absolute distance given in &Aring;<br/>
+<b>Maximum atomic displacement in the distortion, &Delta;:</b> 0.4406 &Aring;<br/>
+<b>Total distortion amplitude:</b> 1.3268 &Aring;<br/>
+<h3>Symmetry Modes Summary</h3><table border="1" cellspacing="1" cellpadding="3"><tbody><tr><td bgcolor=#bbbbbb>Atoms</td><td bgcolor=#bbbbbb>WP</td><td align="center" bgcolor=#bbbbbb>Modes</td></tr><tr><td>O3</td><td>8<i>g</i></td><td> GM1+(1)  <b>X3-(1)</b></td></tr>
+<tr><td>Ca2 Ti1 O2</td><td>4<i>e</i></td><td> GM1+(1)  <b>X3-(1)</b></td></tr>
+<tr><td>Ca1</td><td>2<i>b</i></td><td><b>X3-(1)</b></td></tr>
+<tr><td>O1</td><td>2<i>a</i></td><td><b>X3-(1)</b></td></tr>
+</tbody></table>Note: The primary mode is written in bold letters<br><br><h3>Summary of Amplitudes</h3><p style='width:600px;'><b>Warning: Amplitudes are given for modes normalized within the primitive unit cell of the distorted structure. Under this normalization, mode amplitudes in distorted structures with different multiplication of their primitive unit cell <u>are not directly comparable</u>.</b></p><table border="1" cellspacing="1" cellpadding="3"><tbody>
+<tr bgcolor=#bbbbbb><td>K-vector</td><td>Irrep</td><td>Direction</td><td>Isotropy<br>Subgroup</td><td>Dimension</td><td>Amplitude (&Aring;)</td></td>
+<tr><td>(0,0,0)</td><td>GM1+</td><td>(a)</td><td>I4/mmm (139)</td><td align="center">4</td><td align="center">0.0794</td></tr><tr><td>(1/2,1/2,0)</td><td>X3-</td><td>(a,-a)</td><td>Cmcm (63)</td><td align="center">6</td><td align="center">1.3244</td></tr></tbody></table>
+<br><b>Global distortion:</b> 1.3267 &Aring;<br>
+<br>
+<a id="enlace2" style="display:inline" href="#" onclick="toggle('norm2modes');toggle('enlace2');return false;">For values of the mode amplitudes using a normalization within <br>the primitive unit cell of the high-symmetry  structure click here...</a><span id="norm2modes" style="display:none"><hr><b>Amplitudes normalized with respect to the primitive unit cell <br>of the high-symmetry structure: (norm. factor: <span style="white-space: nowrap; font-size:larger">&radic;<span style="text-decoration:overline;">&nbsp;2.000&nbsp;</span></span>)</b><br><table border="1" cellspacing="1" cellpadding="3"><tbody>
+<tr bgcolor=#bbbbbb><td>K-vector</td><td>Irrep</td><td>Direction</td><td>Isotropy<br>Subgroup</td><td>Dimension</td><td>Amplitude (&Aring;)</td></td>
+<tr><td>(0,0,0)</td><td>GM1+</td><td>(a)</td><td>I4/mmm (139)</td><td align="center">4</td><td align="center">0.0562</td></tr><tr><td>(1/2,1/2,0)</td><td>X3-</td><td>(a,-a)</td><td>Cmcm (63)</td><td align="center">6</td><td align="center">0.9365</td></tr></tbody></table>
+<br><b>Global distortion:</b> 0.9381 &Aring;<br>
+<br><a href="#" onclick="toggle('norm2modes');toggle('enlace2');return false;">Hide values with alternative normalization..</a><hr></span><br><br><br>
+<span id="adicional" style="display:none">
+<a href="#" onclick="toggle('adicional');toggle('enlace');return false;">Hide Detailed information</a><br><br>
+<span id="normmodes" style="display:none">
+<a href="#" onclick="toggle('normmodes');toggle('enlace2');return false;">Hide Normalized Symmetry Modes</a>
+<h3>Normalized basis symmetry modes</h3>
+The modes are normalized to the reference structure unit cell and are given as relative displacements in this cell.<h3>K-vector:  GM = (0,0,0)</h3><h3>Irrep GM1+</h3>
+GM1+ Mode O2 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">O2    </td><td> 0.025772</td><td> 0.000000</td><td> 0.000000</td></tr>
+</table><br>GM1+ Mode O3 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">O3    </td><td> 0.018224</td><td> 0.000000</td><td> 0.000000</td></tr>
+<tr><td align="center">O3_2  </td><td> 0.018224</td><td> 0.000000</td><td> 0.000000</td></tr>
+</table><br>GM1+ Mode Ca2 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">Ca2   </td><td> 0.025772</td><td> 0.000000</td><td> 0.000000</td></tr>
+</table><br>GM1+ Mode Ti1 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">Ti1   </td><td> 0.025772</td><td> 0.000000</td><td> 0.000000</td></tr>
+</table><br><h3>K-vector:  X = (1/2,1/2,0)</h3><h3>Irrep X3-</h3>
+X3- Mode O1 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">O1    </td><td> 0.000000</td><td> 0.130327</td><td> 0.000000</td></tr>
+</table><br>X3- Mode O2 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">O2    </td><td> 0.000000</td><td> 0.092155</td><td> 0.000000</td></tr>
+</table><br>X3- Mode O3 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">O3    </td><td>-0.018224</td><td> 0.000000</td><td> 0.000000</td></tr>
+<tr><td align="center">O3_2  </td><td> 0.018224</td><td> 0.000000</td><td> 0.000000</td></tr>
+</table><br>X3- Mode Ca1 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">Ca1   </td><td> 0.000000</td><td> 0.130327</td><td> 0.000000</td></tr>
+</table><br>X3- Mode Ca2 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">Ca2   </td><td> 0.000000</td><td> 0.092155</td><td> 0.000000</td></tr>
+</table><br>X3- Mode Ti1 1 <br>
+<table border="1" cellspacing="1" cellpadding="3"><tr bgcolor=#bbbbbb><td>Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr>
+<tr><td align="center">Ti1   </td><td> 0.000000</td><td> 0.092155</td><td> 0.000000</td></tr>
+</table><br><a  href="#" onclick="toggle('normmodes');toggle('enlace2');return false;">Hide Normalized Symmetry Modes</a>
+</span>
+<a id="enlace2" style="display:inline" href="#" onclick="toggle('normmodes');toggle('enlace2');return false;">Show Normalized Symmetry Modes</a>
+<h3>K-vector:  GM = (0,0,0)</h3><h3>Irrep: GM1+</h3><h4>Direction: (a)</h4><h4>Isotropy Subgroup: 139 I4/mmm D4h-17</h4>Transformation matrix: <pre>[     1     0     0 ] [      0]
+[     0     1     0 ] [      0]
+[     0     0     1 ] [      0]</pre> <br>
+The amplitude of this distortion is:<br>A<sub>GM1+</sub>= 0.0794 &Aring;<br><br>Normalized polarization vector: (in terms of the amplitudes of the (normalized) atomic symmetry modes) <table border="1" cellspacing="1" cellpadding="3"><tbody><tr><td align="center">O2 1</td><td align="center">O3 1</td><td align="center">Ca2 1</td><td align="center">Ti1 1</td></tr><tr><td>0.6156</td><td>-0.1969</td><td>0.7085</td><td>0.2834</td></tr></tbody></table><table><tbody><tr><td><small>NOTE:</small></td><td><small>A second number next to the label counts the different symmetry modes that may happen for that orbit.</small></td></tr></tbody></table><br><br>Normalized polarization vector expressed as displacements (in cell relative units) of the atoms in the asymmetric unit of the structure:(normalization unit: 1 &Aring;ngstr&ouml;m)<br><table border="1" cellspacing="1" cellpadding="3"><tbody><tr><td align="center">Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr><tr><td align="center">O1</td> <td>0.0000</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">O2</td> <td>0.0159</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">O3</td> <td>-0.0036</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">O3_2</td> <td>-0.0036</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">Ca1</td> <td>0.0000</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">Ca2</td> <td>0.0183</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">Ti1</td> <td>0.0073</td><td>0.0000</td><td>0.0000</td></r></tbody></table><br><br><form action="/cgi-bin/cryst/programs/nph-ampli-extra" method="post">
+<input type="hidden" name="stru" value="/srv/www/bcs_branch_www//bcs/www/tmp/virtual25937-0">
+<input type="hidden" name="irrep" value="GM1+::GM">
+<input type="hidden" name="set" value="<i>C</i><i>m</i><i>c</i><i>m</i>">
+<input type="hidden" name="iso" value="139 I4/mmm D4h-17">
+<input type="hidden" name="what" value="virtual">
+<input type="submit" value="Virtual structure">
+ with only this symmetry component of the distortion frozen.</form>
+<form action="mcif2vesta/index.php" method=post>
+<input type="hidden" name="BCS" value="063
+19.400806 5.425635 5.425635 90.000000 90.000000 90.000000 
+7
+O	1	4c	0.000000	0.750000	0.750000
+O	2	8g	0.799860	0.750000	0.750000
+O	3	8e	0.401150	0.500000	0.000000
+O	3_2	8e	0.401150	0.000000	0.500000
+Ca	1	4c	0.500000	0.750000	0.750000
+Ca	2	8g	0.685060	0.750000	0.750000
+Ti	1	8g	0.899090	0.750000	0.750000
+
+##disp-par## O1x|x0.000000x|x0.000000x|x0.000000
+##disp-par## O2x|x0.001260x|x0.000000x|x0.000000
+##disp-par## O3x|x-0.000285x|x0.000000x|x0.000000
+##disp-par## O3_2x|x-0.000285x|x0.000000x|x0.000000
+##disp-par## Ca1x|x0.000000x|x0.000000x|x0.000000
+##disp-par## Ca2x|x0.001450x|x0.000000x|x0.000000
+##disp-par## Ti1x|x0.000580x|x0.000000x|x0.000000">
+<input type="submit" name="submitBCS" value="Submit to STRCONVERT to visualize and export this mode's displacements">
+</form><h3>K-vector:  X = (1/2,1/2,0)</h3><h3>Irrep: X3-</h3><h4>Direction: (a,-a)</h4><h4>Isotropy Subgroup:  63 Cmcm D2h-17</h4>Transformation matrix: <pre>[     0     1     1 ] [    1/2]
+[     0    -1     1 ] [      0]
+[     1     0     0 ] [      0]</pre> <br>
+The amplitude of this distortion is:<br>A<sub>X3-</sub>= 1.3244 &Aring;<br><br>Normalized polarization vector: (in terms of the amplitudes of the (normalized) atomic symmetry modes) <table border="1" cellspacing="1" cellpadding="3"><tbody><tr><td align="center">O1 1</td><td align="center">O2 1</td><td align="center">O3 1</td><td align="center">Ca1 1</td><td align="center">Ca2 1</td><td align="center">Ti1 1</td></tr><tr><td>0.4705</td><td>-0.5754</td><td>0.6553</td><td>0.0553</td><td>0.1201</td><td>0.0258</td></tr></tbody></table><table><tbody><tr><td><small>NOTE:</small></td><td><small>A second number next to the label counts the different symmetry modes that may happen for that orbit.</small></td></tr></tbody></table><br><br>Normalized polarization vector expressed as displacements (in cell relative units) of the atoms in the asymmetric unit of the structure:(normalization unit: 1 &Aring;ngstr&ouml;m)<br><table border="1" cellspacing="1" cellpadding="3"><tbody><tr><td align="center">Atom</td><td align="center">&delta;x</td><td align="center">&delta;y</td><td align="center">&delta;z</td></tr><tr><td align="center">O1</td> <td>0.0000</td><td>0.0613</td><td>0.0000</td></r><tr><td align="center">O2</td> <td>0.0000</td><td>-0.0530</td><td>0.0000</td></r><tr><td align="center">O3</td> <td>-0.0119</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">O3_2</td> <td>0.0119</td><td>0.0000</td><td>0.0000</td></r><tr><td align="center">Ca1</td> <td>0.0000</td><td>0.0072</td><td>0.0000</td></r><tr><td align="center">Ca2</td> <td>0.0000</td><td>0.0111</td><td>0.0000</td></r><tr><td align="center">Ti1</td> <td>0.0000</td><td>0.0024</td><td>0.0000</td></r></tbody></table><br><br><form action="/cgi-bin/cryst/programs/nph-ampli-extra" method="post">
+<input type="hidden" name="stru" value="/srv/www/bcs_branch_www//bcs/www/tmp/virtual25937-1">
+<input type="hidden" name="irrep" value="X3-::X">
+<input type="hidden" name="set" value="<i>C</i><i>m</i><i>c</i><i>m</i>">
+<input type="hidden" name="iso" value=" 63 Cmcm D2h-17">
+<input type="hidden" name="what" value="virtual">
+<input type="submit" value="Virtual structure">
+ with only this symmetry component of the distortion frozen.</form>
+<form action="mcif2vesta/index.php" method=post>
+<input type="hidden" name="BCS" value="063
+19.400806 5.425635 5.425635 90.000000 90.000000 90.000000 
+7
+O	1	4c	0.000000	0.750000	0.750000
+O	2	8g	0.799860	0.750000	0.750000
+O	3	8e	0.401150	0.500000	0.000000
+O	3_2	8e	0.401150	0.000000	0.500000
+Ca	1	4c	0.500000	0.750000	0.750000
+Ca	2	8g	0.685060	0.750000	0.750000
+Ti	1	8g	0.899090	0.750000	0.750000
+
+##disp-par## O1x|x0.000000x|x0.081200x|x0.000000
+##disp-par## O2x|x0.000000x|x-0.070229x|x0.000000
+##disp-par## O3x|x-0.015815x|x0.000000x|x0.000000
+##disp-par## O3_2x|x0.015815x|x0.000000x|x0.000000
+##disp-par## Ca1x|x0.000000x|x0.009541x|x0.000000
+##disp-par## Ca2x|x0.000000x|x0.014661x|x0.000000
+##disp-par## Ti1x|x0.000000x|x0.003151x|x0.000000">
+<input type="submit" name="submitBCS" value="Submit to STRCONVERT to visualize and export this mode's displacements">
+</form><a href="#" onclick="toggle('adicional');toggle('enlace');return false;">Hide Detailed information</a>
+
+</span><a id="enlace" href="#" onclick="muestra(); return false;">Detailed information</a><br>
+<br>
+<table bgcolor="#dddddd" width="100%">
+  <tr>
+    <td align="left">
+      <small>
+       <a href="http://www.cryst.ehu.es">Bilbao Crystallographic Server</a><br>
+           http://www.cryst.ehu.es
+      </small>
+    </td>
+    <td align="right" rowspan="2"> 
+      <small>
+        For comments, please mail to<br>
+        <a href="mailto:administrador.bcs@ehu.eus">administrador.bcs@ehu.eus</a>
+      </small>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

@@ -54,14 +54,14 @@ def scrape_amplimodes(HSfile, LSfile, verbose=False):
     br.form = list(br.forms())[0]
     response = br.submit()
 
-    # Page 3: Loaded strucs -> click "Find compatable transformation matrices"
+    # Page 3: Loaded structures-> click "Find compatible transformation matrices"
     if verbose:
         print('\n\n\nPage 3\n')
         print(response.read().decode('utf-8'))
     br.form = list(br.forms())[0]
     response = br.submit()
 
-    # Page 4: Found Strucutre relations -> click "analyze via amplimodes"
+    # Page 4: Found Structure relations -> click "analyze via amplimodes"
     if verbose:
         print('\n\n\nPage 4\n')
         print(response.read().decode('utf-8'))

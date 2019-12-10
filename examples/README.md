@@ -91,7 +91,7 @@ HSfile = os.getcwd()+'/Ca3Ti2O7_I4mmm.cif'
 iso = isodistort(HSfile, silent=True)
 ```
 
-Now we have set up the object that interacts with the isodistort wesbite. In the above code, silent is set to True. If silent is False, then a firefox GUI window will be launched so you can watch the code clicking through steps on the website.
+Now we have set up the object that interacts with the isodistort website. In the above code, silent is set to True. If silent is False, then a firefox GUI window will be launched so you can watch the code clicking through steps on the website.
 
 Now we want to choose which irreps to input. Let's say that we want to create another A21am child structure (space group 36), we need irreps X2+ and X3-:
 
