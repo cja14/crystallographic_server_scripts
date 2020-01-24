@@ -106,8 +106,6 @@ def compare_modes(HSfile):
     
     return x, dicts
 
-      
-
 if __name__ == "__main__":
     
     gen_cif()
