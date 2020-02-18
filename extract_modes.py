@@ -8,16 +8,14 @@ from glob import glob
 import os.path
 import re
 
-
-def gen_cif():
+def gen_cif(tol=1e-5):
 
     cellfiles = glob("*.cell")
     for file in cellfiles:
         seed = file.replace(".cell", "")
         f = open(seed + ".cif", "w+")
-        f.write(scrape_findsym(file))
+        f.write(scrape_findsym(file, tol=tol))
         f.close()
-
 
 def amplimodes(HSfile, LSfile, verbose=False):
     """
@@ -48,7 +46,7 @@ def amplimodes(HSfile, LSfile, verbose=False):
     summary, disp_tabs = extract_modes(seed + ".html")
     Nmodes = len(summary) #Number of modes
     modedict = {}
-        
+
     for i in range(Nmodes):
         modedict[summary["Irrep"][i+1]] = summary["Amplitude (Å)"][i+1]
 
@@ -69,7 +67,7 @@ def compare_modes(HSfile):
     --------
     dicts: list of ordered dictionaries
         A list of 
-    """    
+    """
 
     #Get all .cif files in current directory and remove HS structure
     files = glob("*LTT*.cif") + glob("*LTO*.cif")
@@ -95,7 +93,7 @@ def compare_modes(HSfile):
         elif phase == "LTO":
             dicts[2][stoich] = modes
         else:
-            raise ValueError("Phase is not HTT, LTT or LTO")
+            raise ValueError("Phase is not HTT, LTT or LTO.")
 
     #Order dictionaries
     for index, d in enumerate(dicts):

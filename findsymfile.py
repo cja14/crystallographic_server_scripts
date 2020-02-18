@@ -9,18 +9,15 @@ br.set_handle_robots(False)
 """
 Example:
 
-python findsymfile.py structure.cell tol=0.001 > output.cif
-
+python3 findsymfile.py structure.cell tol=0.001 > output.cif
 """
 
-
-def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
+def scrape_findsym(filename, origin=2, tol=1e-5, axeso='abc', axesm='ab(c)',
                    index=None, format=None):
     """
     Script for analysing structure files using findsym
     Returns a cif of the high symmetry structure
     """
-    # atoms = ase.io.read(filename, index=index, format=format)
     atoms = casread(filename)
     n = len(atoms)
     elems = ' '.join(atoms.get_chemical_symbols())
@@ -30,16 +27,11 @@ def scrape_findsym(filename, origin=2, tol=0.0002, axeso='abc', axesm='ab(c)',
     positions = [' '.join([str(p) for p in posns[i, :]])+'\r\n'
                  for i in range(n)]
     spins = atoms.get_magnetic_moments()
-    print("positions: ", positions)
-    print("posns: ", posns)
-    print("spins: ", spins)
 
-
-    # Interacting with findsym websiteb
+    # Interacting with FINDSYM website
     br.open('http://stokes.byu.edu/iso/findsym.php')
     br.form = list(br.forms())[1]
     br['title'] = filename
-    # br['accuracy'] = str(tol)
     br['acclat'] = str(tol)
     br['accpos'] = str(tol)
     br['axeso'] = [axeso]
