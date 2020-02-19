@@ -16,7 +16,7 @@ python3 findsymfile.py structure.cell lattol=0.001
 
 def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         lattol=1e-5, postol=1e-5, magtol=1e-5, axeso='abc', axesm='ab(c)',
-        index=None, format=None, magmom_dir="z"):
+        index=None, format=None, magmom_dir="z", verbose=False):
     """
     Script for analysing structure files using findsym.
 
@@ -61,9 +61,6 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         The space group name and number. If non-magnetic the Hermann-Mauguin
         symbols are used. For magnetic systems the BNS symbols are output.
     """
-    #Print optional arguments
-    print("magnetic: ", magnetic, "print_cif: ", print_cif)
-
     #Get structure attributes
     atoms = casread(filename)
     nAtoms = atoms.get_global_number_of_atoms()
@@ -74,7 +71,8 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
 
     #Dealing with magnetic systems
     if magnetic:
-        print("Treating this structure as magnetic.")
+        if verbose:
+            print("Treating this structure as magnetic.")
         #Define direction dictionary
         dir_dict = {"x": [1, 0, 0], "y": [0, 1, 0], "z": [0, 0, 1], "xy": \
                 [1 / np.sqrt(2), 1 / np.sqrt(2), 0], "yz": [0, 1 / np.sqrt(2),\
@@ -99,7 +97,6 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         positions = [' '.join([str(p) for p in posns[i, :]])+'\r\n'
                  for i in range(nAtoms)]
     #########################################################################
-    print("Positions: ", positions)
 
     # Interacting with FINDSYM website
     br.open('http://stokes.byu.edu/iso/findsym.php')
@@ -133,17 +130,19 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         #Treating magnetic or non-magnetic cases
         if magnetic:
             if '_space_group_magn.number_BNS' in line:
-                SG_number = line.split(" ")[1]
+                SG_number = line.split('"')[1]
             elif '_space_group_magn.name_BNS' in line:
                 SG_name = line.split('"')[1]
         else:
             if '_symmetry_space_group_name_H-M "' in line:
                 SG_name = line.split('"')[1]
             elif '_symmetry_Int_Tables_number' in line:
-                SG_number = line.split(" ")[1]
+                SG_number = line.split(' ')[1]
 
     #Write .CIF file
     if print_cif:
+        if verbose:
+            print("Printing CIF file")
         cifName = filename.replace(filename.split(".")[-1], "cif")
         with open(cifName, "w+") as CIF:
             CIF.write(cifFile)
@@ -159,6 +158,10 @@ if __name__ == '__main__':
         for arg in sys.argv[2:]:
             argsplit = arg.split('=')
             if len(argsplit) == 2:
+                if argsplit[1] == "True":
+                    argsplit[1] = True
+                elif argsplit[1] == "False":
+                    argsplit[1] = False
                 args[argsplit[0]] = argsplit[1]
             else:
                 break
