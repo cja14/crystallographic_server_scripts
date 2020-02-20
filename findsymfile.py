@@ -4,6 +4,7 @@ import mechanize as mechanize
 from casase import casread
 import numpy as np
 import numpy.linalg as la
+import readmixcastep as rc
 
 br = mechanize.Browser()
 br.set_handle_robots(False)
@@ -14,8 +15,8 @@ Example:
 python3 findsymfile.py structure.cell lattol=0.001
 """
 
-def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
-        lattol=1e-5, postol=1e-5, magtol=1e-5, axeso='abc', axesm='ab(c)',
+def findsym_wrap(filename, magnetic=False, print_cif=False, pure=True, origin=2,
+        lattol=1e-3, postol=1e-3, magtol=1e-2, axeso='abc', axesm='ab(c)',
         index=None, format=None, magmom_dir="z", verbose=False):
     """
     Script for analysing structure files using findsym.
@@ -30,7 +31,11 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         magnetic. Default: False
 
     print_cif: bool
-       Determines whether a CIF file is to be written.
+       Determines whether a CIF file is to be written. Default: False.
+
+    pure : bool
+        Determines whether the structure is a pure compound or a mixture (VCA).
+        Default: True.
 
     origin: int
         Choice of origin: 1, 2 or 3. Default = 2.
@@ -51,6 +56,7 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         Direction in which the magnetic moments lie. The first character
         denotes whether it is ferro- (+) or antiferro- (-) magnetic.
 
+
     Returns:
     --------
     filename.cif: .cif file
@@ -62,12 +68,37 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         symbols are used. For magnetic systems the BNS symbols are output.
     """
     #Get structure attributes
-    atoms = casread(filename)
-    nAtoms = atoms.get_global_number_of_atoms()
-    elems = ' '.join(atoms.get_chemical_symbols())
-    cell = atoms.get_cell()
-    latvecs = [' '.join([str(c) for c in cell[i, :]])+'\r\n' for i in range(3)]
-    posns = atoms.get_scaled_positions()
+    if pure:
+        atoms = casread(filename)
+        nAtoms = atoms.get_global_number_of_atoms()
+        elems = ' '.join(atoms.get_chemical_symbols())
+        cell = atoms.get_cell()
+        posns = atoms.get_scaled_positions()
+    else:
+        extension = filename.split(".")[-1]
+        assert extension in ["cell", "castep"], "Mixtures are only supported\
+            if they are .cell or .castep files."
+        if extension == "cell":
+            atoms = rc.readcell(filename)
+        elif extension == "castep":
+            atoms = rc.readcas(filename)
+        else:
+            ValueError("Could not read the file since it was a mixture and not\
+                    a .cell or .castep file.")
+
+        nAtoms = atoms.get_Nions()
+        elems = ' '.join(atoms.get_elements())
+        cell = atoms.get_cell()
+        posns = atoms.get_posns()
+
+        if verbose:
+            print("Number of atoms:", nAtoms)
+            print("Lattice vectors: ", cell)
+            print("Fractional positions: ", posns)
+
+    latvecs = [' '.join([str(c) for c in cell[i, :]])+'\r\n' for i in \
+                range(3)]
+
 
     #Dealing with magnetic systems
     if magnetic:
@@ -81,7 +112,10 @@ def findsym_wrap(filename, magnetic=False, print_cif=True, origin=2,
         n = np.array(dir_dict[magmom_dir]) #Cartesian direction
 
         #Get magnitudes of magnetic moments
-        spins = atoms.get_initial_magnetic_moments()
+        if pure:
+            spins = atoms.get_initial_magnetic_moments()
+        else:
+            spins = atoms.get_init_spin()
 
         #Get magnetic moment vectors relative to the lattice
         proj_spins = np.array([[spins[i]*np.dot(np.array(n), cell[j]) / \

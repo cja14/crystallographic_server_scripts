@@ -11,7 +11,8 @@ Throughout this tutorial, it is assumed that all of the scripts in the crystallo
 
 
 # Findsym - detect space group symmetry of a structure
-
+EVERYTHING BELOW ON FINDSYM IS OBSOLETE UNTIL FURTHER NOTICE.
+I have changed the functionality of this script, and the name of the function.
 First we are going to detect the symmetry of a crystal using the findsym functionality from the Isotropy software suite. 
 
 https://stokes.byu.edu/iso/findsym.php
@@ -33,9 +34,9 @@ By running the above command, we have run the script _findsymfile.py_ on the fil
 This same operation may also be performed from within python. Again from within the examples directory, open python and type the following two commands:
 
 ```python
-from findsymfile import scrape_findsym
-ciffile = scrape_findsym('Ca3Ti2O7_I4mmm.cell', tol=0.001)
-open('Ca3Ti2O7_I4mmm_2.cif', 'w').write(ciffile)
+from findsymfile import findsym_wrap
+spacegroup_name, spacegroup_number = scrape_findsym('Ca3Ti2O7_I4mmm.cell', \
+print_cif=True, postol=0.001)
 ```
 
 This should have created a file _Ca3Ti2O7_I4mmm_2.cif_ that is identical to _Ca3Ti2O7_I4mmm.cif_. 

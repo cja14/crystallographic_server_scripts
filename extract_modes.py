@@ -12,9 +12,9 @@ def gen_cif(tol=1e-5):
 
     cellfiles = glob("*.cell")
     for file in cellfiles:
-        seed = file.replace(".cell", "")
-        f = open(seed + ".cif", "w+")
-        f.write(scrape_findsym(file, tol=tol))
+        seed = file.replace(".cell", ".cif")
+        f = open(seed, "w+")
+        f.write(findsym_wrap(file, lattol=tol, postol=tol))
         f.close()
 
 def amplimodes(HSfile, LSfile, verbose=False):

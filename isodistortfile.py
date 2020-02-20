@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
 import os
@@ -16,11 +17,14 @@ and then add the directory where I had saved the geckodriver file to my path
 class isodistort:
     """ Class for the object that will communicate with isodistort """
 
-    def __init__(self, HSfile, silent=False):
+    def __init__(self, HSfile, silent=True):
         """ Initialise the isodistort object (open connection and load cif) """
+        #Add cwd to HSfile name
+        HSfdir = os.getcwd() + '/' + HSfile
+
         # The no fuss script
         options = Options()
-        options.headless = silent
+        options.headless = True
         profile = webdriver.FirefoxProfile()
         profile.set_preference('browser.download.folderList', 2)
         profile.set_preference('browser.download.manager.showWhenStarting',
@@ -36,7 +40,7 @@ class isodistort:
         base_url = "http://stokes.byu.edu/iso/isodistort.php"
         self.driver.get(base_url)
         self.driver.find_element_by_name("toProcess").clear()
-        self.driver.find_element_by_name("toProcess").send_keys(HSfile)
+        self.driver.find_element_by_name("toProcess").send_keys(HSfdir)
         self.driver.find_element_by_css_selector(
             "input.btn.btn-primary").click()
         self.basetab = self.driver.window_handles[0]
@@ -44,6 +48,117 @@ class isodistort:
         self.modelabels = None
         self.modenames = None
         self.SGtab = None
+        self.MDparamtab = None
+        self.MDresultstab = None
+
+    def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
+            robust_val=1, saveCif=False, saveModeDetails=False):
+        """
+        This function compare a low-symmetry structure with the given
+        high-symmetry structure and outputs the overall distortion and the mode
+        amplitudes. Method 4 of the ISODISTORT web-tool is used.
+
+        Parameters:
+        -----------
+        LSfile: str
+            Name of the .cif file of the low-symmetry structure.
+
+        Returns:
+        --------
+        modeDict: dictionary
+            Dictionary associating to each distortion mode a list of two
+            amplitudes: the first normalised to the child structure, the second
+            normalised to the parent structure.
+
+        overallDisps: list (2)
+            List of the two overall distortions from HS to LS normalised
+            relative to the HS and LS cells, respectively.
+        """
+        #Add cwd to LSfile
+        LSfdir = os.getcwd() + '/' + LSfile
+        LSseed = LSfile.strip(".cif")
+
+        #Switch to basetab
+        self.switch_tab(self.basetab)
+
+        #Input the low-symmetry .cif file
+        self.driver.find_element_by_name("toProcess").clear()
+        self.driver.find_element_by_name("toProcess").send_keys(LSfdir)
+        self.driver.find_element_by_xpath('//FORM[@ACTION="isodistortupload'\
+               +'file.php"]/h3/INPUT[@CLASS="btn btn-primary"]').click()
+
+        #Switch to tab with decomposition parameters
+        self.MDparamtab = self.driver.window_handles[-1]
+        self.switch_tab(self.MDparamtab)
+
+        #Input parameters if not default and submit
+        #Default is to choose first suggested basis relating high- and low-sy-
+        #-mmetry structures
+        basis_options = Select(self.driver.find_element_by_name("basisselect")).\
+                options
+        basis_options[1].click()
+
+        #Origin
+        if origin != [0, 0, 0]:
+            self.driver.find_element_by_xpath('//INPUT[@NAME="chooseorigin"' +\
+                ' and @VALUE="true"]').click()
+            for i, orig in enumerate(origin):
+                self.driver.find_element_by_name("origin" + str(i+1)).clear()
+                self.driver.find_element_by_name("origin" + str(i+1)).send_keys\
+                    (str(origin[i]))
+
+        #Wickoff site-matching method
+        if use_robust:
+            self.driver.find_element_by_xpath('//INPUT[@NAME="trynearest" and ' + \
+                '@VALUE="false"]').click()
+            self.driver.find_element_by_name("dmax").clear()
+            self.driver.find_element_by_name("dmax").send_keys(str(robust_val))
+
+        #Submit
+        self.driver.find_element_by_css_selector("input.btn.btn-primary").click()
+
+        #Saving files if requested
+        if saveCif:
+            self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
+                    click()
+            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+                    click()
+
+        #Get modes and amplitudes
+        #Change to window with modes details
+        self.driver.find_element_by_xpath('//INPUT[@VALUE="modesdetails"]').\
+                click()
+        self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+                click()
+        self.MDresultstab = self.driver.window_handles[-1]
+        self.switch_tab(self.MDresultstab)
+        time.sleep(3)
+
+        if saveModeDetails:
+            with open(LSseed + '_ISOmodes.html', "w+") as html:
+                html.write(self.driver.page_source)
+
+        modeDict = {}
+        fileContents=self.driver.find_element_by_xpath('//div[@class="pad"]/pre')\
+            .text.splitlines()
+
+        for iLine, line in enumerate(fileContents):
+            if ("mode" in line) and ("As" in line):
+                start = iLine + 1
+            elif "Parent-cell strain mode definitions" in line:
+                end = iLine
+
+        modesInfo = fileContents[start:end]
+
+        for _, line in enumerate(modesInfo):
+            if " all" in line:
+                modeName = line.split()[0].split("]")[1]
+                modeAmps = [float(line.split()[2]), float(line.split()[3])]
+                modeDict[modeName] = modeAmps
+            elif "Overall" in line:
+                overallDisps = [float(line.split()[1]), float(line.split()[2])]
+
+        return modeDict, overallDisps
 
     @staticmethod
     def get_kpoints(irreps):
@@ -159,7 +274,7 @@ class isodistort:
     def switch_tab(self, tab, name=''):
         """ Switch between selenium tabs (usually class attributes) """
         if tab is not None:
-            self.driver.switch_to_window(tab)
+            self.driver.switch_to.window(tab)
         else:
             raise ValueError('Cannot switch to ' + name +
                              ' tab when it does not exist.')
@@ -252,8 +367,39 @@ class isodistort:
         self.driver.switch_to_window(self.amplitudestab)
         time.sleep(5)
         os.system('mv subgroup_cif.txt '+outputfile)
-    
+
     def close(self):
         """ Close the instance of isodistort class """
         time.sleep(5)
         self.driver.quit()
+
+if __name__ == "__main__":
+    import sys
+    #Getting input high- and low-symmetry .cif filenames
+    HSfile = str(sys.argv[1])
+    LSfile = str(sys.argv[2])
+
+    #Getting argument dictionary for the get_mode_amps function
+    kwargs = {}
+    if sys.argv[3:]:
+        for arg in sys.argv[3:]:
+            argsplit = arg.split('=')
+            if len(argsplit) == 2:
+                if argsplit[1] == "True":
+                    argsplit[1] = True
+                elif argsplit[1] == "False":
+                    argsplit[1] = False
+                args[argsplit[0]] = argsplit[1]
+            else:
+                break
+
+    #Initialise ISODISTORT class instance 
+    iso = isodistort(HSfile, silent=False)
+    modeDict, overallDisps = iso.get_mode_amps(LSfile, **kwargs)
+    LSseed = LSfile.strip(".cif")
+    print("Modes:\n", modeDict)
+    print("Overall distortion: ", overallDisps[0], " Å")
+    iso.close()
+
+
+
