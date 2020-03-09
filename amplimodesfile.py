@@ -3,6 +3,7 @@
 import mechanize as mechanize
 
 br = mechanize.Browser()
+from time import sleep
 
 """
 WARNING: This is an (almost) one-size fits all script designed to work in

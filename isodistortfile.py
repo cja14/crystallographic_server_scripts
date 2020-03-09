@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import time
 import os
+from glob import glob
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
@@ -24,7 +25,7 @@ class isodistort:
 
         # The no fuss script
         options = Options()
-        options.headless = True
+        options.headless = silent
         profile = webdriver.FirefoxProfile()
         profile.set_preference('browser.download.folderList', 2)
         profile.set_preference('browser.download.manager.showWhenStarting',
@@ -34,7 +35,7 @@ class isodistort:
                                'text/plain, text/html, text/csv')
         self.driver = webdriver.Firefox(firefox_profile=profile,
                                         options=options)
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(20)
 
         # Initial page (load structure)
         base_url = "http://stokes.byu.edu/iso/isodistort.php"
@@ -52,7 +53,7 @@ class isodistort:
         self.MDresultstab = None
 
     def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
-            robust_val=1, saveCif=False, saveModeDetails=False):
+            robust_val=1, saveCif=False, saveModeDetails=True):
         """
         This function compare a low-symmetry structure with the given
         high-symmetry structure and outputs the overall distortion and the mode
@@ -341,10 +342,10 @@ class isodistort:
         """
 
         self.switch_tab(self.amplitudestab, 'amplitudes')
-        
+
         if self.modelabels is None:
             self.get_mode_labels()
-        
+
         # Now to actually assign the amplitude values
         for irrep in amplitudes:
             dispvec = amplitudes[irrep]
@@ -357,12 +358,12 @@ class isodistort:
                 except NoSuchElementException:
                     import pdb
                     pdb.set_trace()
-            
+
         self.driver.find_element_by_xpath(
             "(//input[@name='origintype'])[3]").click()
         self.driver.find_element_by_css_selector(
             "input.btn.btn-primary").click()
-        
+
         # Changing tabs again
         self.driver.switch_to_window(self.amplitudestab)
         time.sleep(5)
@@ -377,29 +378,31 @@ if __name__ == "__main__":
     import sys
     #Getting input high- and low-symmetry .cif filenames
     HSfile = str(sys.argv[1])
-    LSfile = str(sys.argv[2])
 
     #Getting argument dictionary for the get_mode_amps function
     kwargs = {}
-    if sys.argv[3:]:
-        for arg in sys.argv[3:]:
+    if sys.argv[2:]:
+        for arg in sys.argv[2:]:
             argsplit = arg.split('=')
             if len(argsplit) == 2:
                 if argsplit[1] == "True":
                     argsplit[1] = True
                 elif argsplit[1] == "False":
                     argsplit[1] = False
-                args[argsplit[0]] = argsplit[1]
+                kwargs[argsplit[0]] = argsplit[1]
             else:
                 break
 
     #Initialise ISODISTORT class instance 
-    iso = isodistort(HSfile, silent=False)
-    modeDict, overallDisps = iso.get_mode_amps(LSfile, **kwargs)
-    LSseed = LSfile.strip(".cif")
-    print("Modes:\n", modeDict)
-    print("Overall distortion: ", overallDisps[0], " Å")
+    iso = isodistort(HSfile)
+    os.chdir(os.getcwd())
+    LSfiles = glob("*.cif")
+    for LSfile in LSfiles:
+        print(LSfile)
+        LShtml = LSfile.replace(".cif", "_ISOmodes.html")
+        if not glob(LShtml):
+            modeDict, overallDisps = iso.get_mode_amps(LSfile, **kwargs)
+
     iso.close()
-
-
+    os.remove('geckodriver.log')
 
