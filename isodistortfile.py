@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import NoSuchElementException
-
+from subprocess import call
 """
 After installing selenium package, I had to download geckodriver from:
 https://github.com/mozilla/geckodriver/releases
@@ -28,14 +28,14 @@ class isodistort:
         options.headless = silent
         profile = webdriver.FirefoxProfile()
         profile.set_preference('browser.download.folderList', 2)
-        profile.set_preference('browser.download.manager.showWhenStarting',
+        profile.set_preference('browser.download.manager.showWhenStarting',\
                                False)
         profile.set_preference('browser.download.dir', os.getcwd())
-        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',\
                                'text/plain, text/html, text/csv')
-        self.driver = webdriver.Firefox(firefox_profile=profile,
+        self.driver = webdriver.Firefox(firefox_profile=profile,\
                                         options=options)
-        self.driver.implicitly_wait(20)
+        self.driver.implicitly_wait(10)
 
         # Initial page (load structure)
         base_url = "http://stokes.byu.edu/iso/isodistort.php"
@@ -47,34 +47,23 @@ class isodistort:
         self.basetab = self.driver.window_handles[0]
         self.amplitudestab = None
         self.modelabels = None
+        self.modevalues = None
         self.modenames = None
         self.SGtab = None
         self.MDparamtab = None
         self.MDresultstab = None
 
-    def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
-            robust_val=1, saveCif=False, saveModeDetails=True):
+    def load_lowsym_structure(self, LSfile, origin=[0, 0, 0], \
+            use_robust=False, robust_val=1):
         """
-        This function compare a low-symmetry structure with the given
-        high-symmetry structure and outputs the overall distortion and the mode
-        amplitudes. Method 4 of the ISODISTORT web-tool is used.
-
+        This function uses Method 4 to load a .cif file corresponding to a
+        low-symmetry structure.
         Parameters:
         -----------
         LSfile: str
-            Name of the .cif file of the low-symmetry structure.
-
-        Returns:
-        --------
-        modeDict: dictionary
-            Dictionary associating to each distortion mode a list of two
-            amplitudes: the first normalised to the child structure, the second
-            normalised to the parent structure.
-
-        overallDisps: list (2)
-            List of the two overall distortions from HS to LS normalised
-            relative to the HS and LS cells, respectively.
+            Filename of low-symmetry file.
         """
+
         #Add cwd to LSfile
         LSfdir = os.getcwd() + '/' + LSfile
         LSseed = LSfile.strip(".cif")
@@ -117,6 +106,37 @@ class isodistort:
 
         #Submit
         self.driver.find_element_by_css_selector("input.btn.btn-primary").click()
+        time.sleep(2)
+        #Switch tab
+        self.amplitudestab = self.driver.window_handles[-1]
+        self.switch_tab(self.amplitudestab)
+
+    def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
+            robust_val=1, saveCif=False, saveModeDetails=False):
+        """
+        This function compare a low-symmetry structure with the given
+        high-symmetry structure and outputs the overall distortion and the mode
+        amplitudes. Method 4 of the ISODISTORT web-tool is used.
+
+        Parameters:
+        -----------
+        LSfile: str
+            Name of the .cif file of the low-symmetry structure.
+
+        Returns:
+        --------
+        modeDict: dictionary
+            Dictionary associating to each distortion mode a list of two
+            amplitudes: the first normalised to the child structure, the second
+            normalised to the parent structure.
+
+        overallDisps: list (2)
+            List of the two overall distortions from HS to LS normalised
+            relative to the HS and LS cells, respectively.
+        """
+        #Load low-symmetry structure and change tabs
+        self.load_lowsym_structure(LSfile, origin=origin, use_robust=\
+                use_robust, robust_val=robust_val)
 
         #Saving files if requested
         if saveCif:
@@ -222,7 +242,16 @@ class isodistort:
         #self.amplitudestab = self.driver.window_handles[-1]
 
     def choose_by_spacegroup(self, SG, id_from_list=0):
-        """ Select child by spacegroup not by irrep """
+        """
+        This function uses Method 1 to select by spacegroup.
+
+        Parameters:
+        ----------
+        SG: int
+            Space group number of subgroup.
+
+        id_from_list: int
+        """
         self.switch_tab(self.basetab, 'base')
 
         # Select target child space group from list
@@ -266,11 +295,11 @@ class isodistort:
         self.driver.find_element_by_css_selector(
             "input.btn.btn-primary").click()
 
-        self.modelabels = None
-        self.modenames = None
+        #self.modelabels = None
+        #self.modenames = None
 
         # Changing tabs again
-        self.amplitudestab = self.driver.window_handles[-1]
+        #self.amplitudestab = self.driver.window_handles[-1]
 
     def switch_tab(self, tab, name=''):
         """ Switch between selenium tabs (usually class attributes) """
@@ -282,9 +311,8 @@ class isodistort:
 
     def get_mode_labels(self):
         """
-        Once the space group has been selected, save the mode labels
-        and the index of each amplitude cell on the form (used internally)
-        as class attributes
+        This function extracts the mode names, labels and values and stores
+        them as internal class attributes.
         """
         self.switch_tab(self.amplitudestab, 'amplitudes')
         time.sleep(5)
@@ -302,6 +330,7 @@ class isodistort:
         # Annoyingly, the modenames are not ordered as one might expect
         self.modelabels = {}
         self.modenames = {}
+        self.modevalues = {}
         for i, ln in enumerate(pagelines[startln:endln]):
             lnsplt = ln.split()
             if lnsplt[0] == '</p><p>':
@@ -313,10 +342,13 @@ class isodistort:
                         self.modenames[irrep] += [term[6:-1]]
                     elif 'size' in term:
                         self.modelabels[irrep] += [term[9:-4]]
+                    elif 'value' in term:
+                        self.modevalues[irrep] += [float(term[7:-1])]
             else:
                 irrep = lnsplt[0].split(']')[1]
                 self.modenames[irrep] = []
                 self.modelabels[irrep] = []
+                self.modevalues[irrep] = []
 
     def view_modes(self):
         """
@@ -332,23 +364,23 @@ class isodistort:
 
         return self.modelabels
 
-    def set_amplitudes(self, outputfile, amplitudes):
+    def set_amplitudes(self):
         """
         Once the space group has been selected, distort the parent structure
         and download the child cif.
 
-        input outputfile: filename of the child structure cif
-        input amplitudes: dict of form {'irrep_label': [distortion_vect], ...}
+        Parameters:
+        -----------
         """
-
+        #Switch to amplitudes tab
         self.switch_tab(self.amplitudestab, 'amplitudes')
 
         if self.modelabels is None:
             self.get_mode_labels()
 
         # Now to actually assign the amplitude values
-        for irrep in amplitudes:
-            dispvec = amplitudes[irrep]
+        for irrep in self.modevalues:
+            dispvec = self.modevalues[irrep]
             elemnames = self.modenames[irrep]
             for i, name in enumerate(elemnames):
                 try:
@@ -359,19 +391,21 @@ class isodistort:
                     import pdb
                     pdb.set_trace()
 
-        self.driver.find_element_by_xpath(
-            "(//input[@name='origintype'])[3]").click()
-        self.driver.find_element_by_css_selector(
-            "input.btn.btn-primary").click()
-
-        # Changing tabs again
-        self.driver.switch_to_window(self.amplitudestab)
-        time.sleep(5)
-        os.system('mv subgroup_cif.txt '+outputfile)
+    def saveCif(self, fname="", close=False):
+        self.MDresultstab = self.driver.window_handles[-1]
+        self.switch_tab(self.MDresultstab)
+        self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
+                    click()
+        self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+                    click()
+        if fname is not "":
+            call(['mv', 'subgroup_cif.txt', fname])
+        if close:
+            self.close()
 
     def close(self):
         """ Close the instance of isodistort class """
-        time.sleep(5)
+        call(['rm', 'geckodriver.log'])
         self.driver.quit()
 
 if __name__ == "__main__":
