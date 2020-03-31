@@ -295,11 +295,9 @@ class isodistort:
         self.driver.find_element_by_css_selector(
             "input.btn.btn-primary").click()
 
-        #self.modelabels = None
-        #self.modenames = None
-
         # Changing tabs again
-        #self.amplitudestab = self.driver.window_handles[-1]
+        self.amplitudestab = self.driver.window_handles[-1]
+        self.switch_tab(self.amplitudestab)
 
     def switch_tab(self, tab, name=''):
         """ Switch between selenium tabs (usually class attributes) """
@@ -391,15 +389,28 @@ class isodistort:
                     import pdb
                     pdb.set_trace()
 
+        return None
+
     def saveCif(self, fname="", close=False):
-        self.MDresultstab = self.driver.window_handles[-1]
-        self.switch_tab(self.MDresultstab)
+        """
+        This function saves a CIF file of the structure that has been created.
+        If  fname is not given, the default ISODISTORT filename will be used.
+        It is assumed that the tab the driver is pointed towards is the final
+        tab with the amplitudes.
+        """
         self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
                     click()
         self.driver.find_element_by_css_selector("input.btn.btn-primary").\
                     click()
         if fname is not "":
+            while 'subgroup_cif.txt' not in os.listdir('.'):
+                time.sleep(1)
             call(['mv', 'subgroup_cif.txt', fname])
+            count=0
+            while "subgroup_cif.txt" in os.listdir('.'):
+                time.sleep(1)
+                count+=1
+                assert count < 10, "Took too long to print CIF file."
         if close:
             self.close()
 
