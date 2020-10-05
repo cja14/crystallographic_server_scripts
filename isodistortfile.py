@@ -112,7 +112,7 @@ class isodistort:
         self.switch_tab(self.amplitudestab)
 
     def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
-            robust_val=1, saveCif=False, saveModeDetails=False):
+            robust_val=1, saveCif=False, saveModeDetails=True):
         """
         This function compare a low-symmetry structure with the given
         high-symmetry structure and outputs the overall distortion and the mode
@@ -156,6 +156,7 @@ class isodistort:
         time.sleep(3)
 
         if saveModeDetails:
+            LSseed = LSfile.strip(".cif")
             with open(LSseed + '_ISOmodes.html', "w+") as html:
                 html.write(self.driver.page_source)
 
@@ -402,7 +403,7 @@ class isodistort:
                     click()
         self.driver.find_element_by_css_selector("input.btn.btn-primary").\
                     click()
-        if fname is not "":
+        if fname != "":
             while 'subgroup_cif.txt' not in os.listdir('.'):
                 time.sleep(1)
             call(['mv', 'subgroup_cif.txt', fname])
@@ -439,15 +440,17 @@ if __name__ == "__main__":
                 break
 
     #Initialise ISODISTORT class instance 
-    iso = isodistort(HSfile)
+    iso = isodistort(HSfile, silent=True)
     os.chdir(os.getcwd())
     LSfiles = glob("*.cif")
     for LSfile in LSfiles:
         print(LSfile)
         LShtml = LSfile.replace(".cif", "_ISOmodes.html")
         if not glob(LShtml):
+            print("Not already done: ", LShtml)
             modeDict, overallDisps = iso.get_mode_amps(LSfile, **kwargs)
 
     iso.close()
-    os.remove('geckodriver.log')
+    if glob("geckodriver.log"):
+        os.remove('geckodriver.log')
 

@@ -105,7 +105,7 @@ def isomodes(LSfile, parent=False):
         print("The ISODISTORT output %s is not complete." % LSfile.replace('.cif',\
                 '_ISOmodes.html'))
         modeDict = {}
-        overallDisps = None
+        overallDisp = None
 
     return modeDict, overallDisp
 
@@ -161,5 +161,3 @@ def compare_modes(HSfile, useAmplimodes=False, parent=False):
 if __name__ == "__main__":
     #Generate .CIF files
     gen_cif()
-    
-    

@@ -1,10 +1,11 @@
 # crystallographic_server_scripts
 A collection of python scripts to interface with tools available on crystallographic web servers (Isotropy Software Suite/Bilbao Crystallographic Server).
 
-
+Originally written by Christopher Ablitt.
+Adapted by Christopher Keegan.
 ## Requirements
 
-* python (scripts should work with both versions 2.7 and 3.5)
+* python (scripts should work with both versions 2.7 and 3.5))
 * the following modules installed: _numpy_, _pandas_, _ase_, _mechanize_, _selenium_
 
 The isodistortfile.py script uses the selenium module to interact with the website (whereas the other scripts use mechanize). To work, selenium needs to use a browser (as setup, the scripts use firefox) and therefore the browser needs to be installed and selenium needs to have access to an appropriate driver file.

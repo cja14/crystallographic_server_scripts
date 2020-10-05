@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import mechanize as mechanize
-from casase import casread
+from misctools import casread
 import numpy as np
 import numpy.linalg as la
 import readmixcastep as rc
@@ -16,7 +16,7 @@ python3 findsymfile.py structure.cell lattol=0.001
 """
 
 def findsym_wrap(filename, magnetic=False, print_cif=False, pure=True, origin=2,
-        lattol=1e-4, postol=1e-4, magtol=1e-2, axeso='abc', axesm='ab(c)',
+        lattol=1e-4, postol=1e-3, magtol=1e-2, axeso='abc', axesm='ab(c)',
         index=None, format=None, magmom_dir="z", verbose=False):
     """
     Script for analysing structure files using findsym.
