@@ -5,6 +5,7 @@ from misctools import casread
 import numpy as np
 import numpy.linalg as la
 import readmixcastep as rc
+from ase import io
 
 br = mechanize.Browser()
 br.set_handle_robots(False)
@@ -67,38 +68,26 @@ def findsym_wrap(filename, magnetic=False, print_cif=False, pure=True, origin=2,
         The space group name and number. If non-magnetic the Hermann-Mauguin
         symbols are used. For magnetic systems the BNS symbols are output.
     """
-    #Get structure attributes
-    if pure:
-        atoms = casread(filename)
+
+    #Type of structure:
+    extension = filename.split(".")[-1]
+    if extension in ["cell", "castep"]:
+        nAtoms, elems, cell, posns, latvecs = castep_structure(filename,
+                extension)
+    elif extension == "cif":
+        atoms = io.read(filename)
         nAtoms = atoms.get_global_number_of_atoms()
         elems = ' '.join(atoms.get_chemical_symbols())
-        cell = atoms.get_cell()
+        cell = np.array(atoms.get_cell())
         posns = atoms.get_scaled_positions()
-    else:
-        extension = filename.split(".")[-1]
-        assert extension in ["cell", "castep"], "Mixtures are only supported\
-            if they are .cell or .castep files."
-        if extension == "cell":
-            atoms = rc.readcell(filename)
-        elif extension == "castep":
-            atoms = rc.readcas(filename)
-        else:
-            ValueError("Could not read the file since it was a mixture and not\
-                    a .cell or .castep file.")
-
-        nAtoms = atoms.Nions
-        elems = ' '.join(atoms.get_elements())
-        cell = atoms.get_cell()
-        posns = atoms.get_posns()
 
         if verbose:
             print("Number of atoms:", nAtoms)
             print("Lattice vectors: ", cell)
             print("Fractional positions: ", posns)
 
-    latvecs = [' '.join([str(c) for c in cell[i, :]])+'\r\n' for i in \
-                range(3)]
-
+        latvecs = [' '.join([str(c) for c in cell[i, :]])+'\r\n' for i in \
+                    range(3)]
 
     #Dealing with magnetic systems
     if magnetic:
@@ -182,6 +171,43 @@ def findsym_wrap(filename, magnetic=False, print_cif=False, pure=True, origin=2,
             CIF.write(cifFile)
 
     return SG_name, SG_number
+
+
+def castep_structure(filename, extension):
+        #Get structure attributes
+        if pure:
+            atoms = casread(filename)
+            nAtoms = atoms.get_global_number_of_atoms()
+            elems = ' '.join(atoms.get_chemical_symbols())
+            cell = atoms.get_cell()
+            posns = atoms.get_scaled_positions()
+        else:
+            extension = filename.split(".")[-1]
+            assert extension in ["cell", "castep"], "Mixtures are only supported\
+                if they are .cell or .castep files."
+            if extension == "cell":
+                atoms = rc.readcell(filename)
+            elif extension == "castep":
+                atoms = rc.readcas(filename)
+            else:
+                ValueError("Could not read the file since it was a mixture and not\
+                        a .cell or .castep file.")
+
+            nAtoms = atoms.Nions
+            elems = ' '.join(atoms.get_elements())
+            cell = atoms.get_cell()
+            posns = atoms.get_posns()
+
+            if verbose:
+                print("Number of atoms:", nAtoms)
+                print("Lattice vectors: ", cell)
+                print("Fractional positions: ", posns)
+
+        latvecs = [' '.join([str(c) for c in cell[i, :]])+'\r\n' for i in \
+                    range(3)]
+
+        return nAtoms, elems, cell, posns, latvecs
+
 
 if __name__ == '__main__':
     import sys
