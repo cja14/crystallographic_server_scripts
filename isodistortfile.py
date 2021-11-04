@@ -8,6 +8,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from subprocess import call
+import fnmatch
 """
 After installing selenium package, I had to download geckodriver from:
 https://github.com/mozilla/geckodriver/releases
@@ -28,17 +29,17 @@ class isodistort:
         options.headless = silent
         profile = webdriver.FirefoxProfile()
         profile.set_preference('browser.download.folderList', 2)
-        profile.set_preference('browser.download.manager.showWhenStarting',\
+        profile.set_preference('browser.download.manager.showWhenStarting',
                                False)
         profile.set_preference('browser.download.dir', os.getcwd())
-        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',\
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
                                'text/plain, text/html, text/csv')
-        self.driver = webdriver.Firefox(firefox_profile=profile,\
+        self.driver = webdriver.Firefox(firefox_profile=profile,
                                         options=options)
         self.driver.implicitly_wait(10)
 
         # Initial page (load structure)
-        base_url = "http://stokes.byu.edu/iso/isodistort.php"
+        base_url = "https://stokes.byu.edu/iso/isodistort.php"
         self.driver.get(base_url)
         self.driver.find_element_by_name("toProcess").clear()
         self.driver.find_element_by_name("toProcess").send_keys(HSfdir)
@@ -111,8 +112,9 @@ class isodistort:
         self.amplitudestab = self.driver.window_handles[-1]
         self.switch_tab(self.amplitudestab)
 
-    def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False, \
-            robust_val=1, saveCif=False, saveModeDetails=True):
+    def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False,
+            robust_val=1, saveCif=False, saveModeDetails=True, parent=True,
+            vectors=False):
         """
         This function compare a low-symmetry structure with the given
         high-symmetry structure and outputs the overall distortion and the mode
@@ -155,32 +157,57 @@ class isodistort:
         self.switch_tab(self.MDresultstab)
         time.sleep(3)
 
+        # Save mode details page as a .html file
         if saveModeDetails:
             LSseed = LSfile.strip(".cif")
             with open(LSseed + '_ISOmodes.html', "w+") as html:
                 html.write(self.driver.page_source)
 
-        modeDict = {}
-        fileContents=self.driver.find_element_by_xpath('//div[@class="pad"]/pre')\
+        # Initialise mode dictionary
+        modeDict = {}    # Just amplitudes
+        modeVecDict = {}  # Order parameter vector
+        fileContents = self.driver.find_element_by_xpath('//div[@class="pad"]/pre')\
             .text.splitlines()
 
+        # Iterate through lines of mode details page and delimit to mode amps
         for iLine, line in enumerate(fileContents):
-            if ("mode" in line) and ("As" in line):
+            if ("mode" in line) and ("Ap" in line):
                 start = iLine + 1
             elif "Parent-cell strain mode definitions" in line:
                 end = iLine
 
         modesInfo = fileContents[start:end]
 
+        # Iterate through mode amplitude region
         for _, line in enumerate(modesInfo):
+            if (line != "") and (" all" not in line) and ("Overall" not in
+                                                          line):
+                # Define mode name
+                modeName = line.split()[0].split("]")[1].split('[')[0]
+                # Extract parent or child component of mode vector
+                if parent:
+                    component = float(line.split()[3])
+                else:
+                    component = float(line.split()[2])
+                # Append to mode vector
+                if modeName not in modeVecDict:
+                    modeVecDict[modeName] = [component]
+                else:
+                    modeVecDict[modeName].append(component)
+
             if " all" in line:
                 modeName = line.split()[0].split("]")[1]
-                modeAmps = [float(line.split()[2]), float(line.split()[3])]
-                modeDict[modeName] = modeAmps
+                if parent:
+                    modeDict[modeName] = float(line.split()[3])
+                else:
+                    modeDict[modeName] = float(line.split()[2])
             elif "Overall" in line:
                 overallDisps = [float(line.split()[1]), float(line.split()[2])]
 
-        return modeDict, overallDisps
+        if vectors:
+            return modeDict, overallDisps, modeVecDict
+        else:
+            return modeDict, overallDisps
 
     @staticmethod
     def get_kpoints(irreps):
@@ -314,7 +341,7 @@ class isodistort:
         them as internal class attributes.
         """
         self.switch_tab(self.amplitudestab, 'amplitudes')
-        time.sleep(5)
+        time.sleep(2)
 
         page = self.driver.page_source
         pagelines = page.split('\n')
@@ -371,11 +398,10 @@ class isodistort:
         Parameters:
         -----------
         """
-        #Switch to amplitudes tab
+        # Switch to amplitudes tab
         self.switch_tab(self.amplitudestab, 'amplitudes')
 
-        if self.modelabels is None:
-            self.get_mode_labels()
+        assert self.modelabels is not None, "Need to get mode labels first."
 
         # Now to actually assign the amplitude values
         for irrep in self.modevalues:
@@ -385,33 +411,69 @@ class isodistort:
                 try:
                     elem = self.driver.find_element_by_name(name)
                     elem.clear()
-                    elem.send_keys(str(dispvec[i]))
+                    elem.send_keys('{:.8f}'.format(dispvec[i]))
                 except NoSuchElementException:
                     import pdb
                     pdb.set_trace()
 
         return None
 
-    def saveCif(self, fname="", close=False):
+    def save_cif(self, fname="", close=False):
         """
         This function saves a CIF file of the structure that has been created.
         If  fname is not given, the default ISODISTORT filename will be used.
         It is assumed that the tab the driver is pointed towards is the final
         tab with the amplitudes.
         """
-        self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
-                    click()
-        self.driver.find_element_by_css_selector("input.btn.btn-primary").\
-                    click()
         if fname != "":
+            assert ".cif" in fname, "Filename does not end by .cif"
+            assert 'subgroup_cif.txt' not in os.listdir("."), \
+                    "Already a 'subgroup_cif.txt' file in current directory."
+            assert len(fnmatch.filter(os.listdir('.'),
+                       'subgroup_cif\(?\).txt')) == 0, "subgroup_cif(?).txt" +\
+                "present."
+
+            # Save CIF file (default 'subgroup_cif.txt' filename will be used)
+            self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]'
+                                              ).click()
+            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+                click()
+            time.sleep(2)
+
+            # Wait until filename is in current directory
+            count = 0
             while 'subgroup_cif.txt' not in os.listdir('.'):
                 time.sleep(1)
-            call(['mv', 'subgroup_cif.txt', fname])
-            count=0
-            while "subgroup_cif.txt" in os.listdir('.'):
+                count += 1
+                assert count < 5, "Took too long to print subgroup_cif.txt"
+
+            # Ensure file is not empty
+            count = 0
+            while os.path.getsize('subgroup_cif.txt') == 0:
+                print("File {} is empty.\n Will delete and try again".format
+                      ('subgroup_cif.txt'))
+                # Re-download subgroup_cif.txt
+                self.driver.find_element_by_css_selector(
+                        "input.btn.btn-primary").click()
                 time.sleep(1)
-                count+=1
-                assert count < 10, "Took too long to print CIF file."
+                count += 1
+                assert count < 5, "Too many empty file instances."
+
+            # Change filename to desired name
+            count = 0
+            while 'subgroup_cif.txt' in os.listdir('.'):
+                call(['mv', 'subgroup_cif.txt', fname])
+                time.sleep(1)
+                count += 1
+                assert count < 5
+
+
+        else:
+            self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
+                click()
+            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+                click()
+
         if close:
             self.close()
 
@@ -453,4 +515,3 @@ if __name__ == "__main__":
     iso.close()
     if glob("geckodriver.log"):
         os.remove('geckodriver.log')
-

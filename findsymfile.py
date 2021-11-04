@@ -122,7 +122,7 @@ def findsym_wrap(filename, magnetic=False, print_cif=False, pure=True, origin=2,
     #########################################################################
 
     # Interacting with FINDSYM website
-    br.open('http://stokes.byu.edu/iso/findsym.php')
+    br.open('https://stokes.byu.edu/iso/findsym.php')
     br.form = list(br.forms())[1]
     br['title'] = filename
     br['acclat'] = str(lattol)

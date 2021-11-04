@@ -7,20 +7,13 @@ from analyse_amplimodes_html import extract_modes
 from glob import glob
 import os.path
 import re
-import sys
 
-def gen_cif(tol=1e-3, pure=False, print_cif=True):
-
-    cellfiles = glob("*.cell")
-    for file in cellfiles:
-        seed = file.replace(".cell", ".cif")
-        findsym_wrap(file, print_cif=print_cif, pure=pure, lattol=tol,  postol=tol)
 
 def amplimodes(HSfile, LSfile, verbose=False):
     """
-    This function interfaces with the Amplimodes web page on the 
+    This function interfaces with the Amplimodes web page on the
     crystallographic server to extract the amplitude of the distortion
-    modes between a high-symmetry and low-symmetry structure. 
+    modes between a high-symmetry and low-symmetry structure.
 
     It is crucial that the space group of the structure in the LSfile
     be of a different space group to the high-symmetry structure.
@@ -51,7 +44,8 @@ def amplimodes(HSfile, LSfile, verbose=False):
 
     return modedict
 
-def isomodes(LSfile, parent=False):
+
+def isomodes(LSfile, parent=True):
     """
     This function analyses the HTML output from an ISODISTORT mode analysis
     of a structure whose CIF filename is LSfile and returns a mode
@@ -71,43 +65,56 @@ def isomodes(LSfile, parent=False):
     overallDisp: list
         List of the overall distortions in the son and parent phases (Å).
     """
-    #Get .html filename
-    LSfile = LSfile.replace(".castep", "_ISOmodes.html")
 
     with open(LSfile, 'r+') as f:
         fCont = f.readlines()
         #Define region of HTML file with content of interest
         for iLine, line in enumerate(fCont):
-            if ("mode" in line) and ("As" in line):
+            if ("mode" in line) and ("Ap" in line):
                 start = iLine + 1
             elif 'Parent-cell strain mode definitions' in line:
                 end = iLine
     try:
         modesInfo = fCont[start:end]
         modeDict = {}
-
-        #Get the amplitudes
+        modeVecDict = {}
+        # Get the amplitudes
         for line in modesInfo:
-            if " all" in line:
-                modeName = line.split()[0].split("]")[1]
-                modeAmps = [float(line.split()[2]), float(line.split()[3])]
+            if (len(line.split()) > 0) and (" all" not in line) and \
+             ("Overall" not in line):
+                # Define mode name
+                modeName = line.split()[0].split("]")[1].split('[')[0]
+                # Extract parent or child component of mode vector
                 if parent:
-                    modeDict[modeName] = modeAmps[1]
+                    component = float(line.split()[-2])
                 else:
-                    modeDict[modeName] = modeAmps[0]
+                    component = float(line.split()[-3])
+                # Append to mode vector
+                if modeName not in modeVecDict:
+                    modeVecDict[modeName] = [component]
+                else:
+                    modeVecDict[modeName].append(component)
+
+            elif " all" in line:
+                modeName = line.split()[0].split("]")[1]
+                if parent:
+                    modeDict[modeName] = float(line.split()[-1])
+                else:
+                    modeDict[modeName] = float(line.split()[-2])
 
             elif "Overall" in line:
                 if parent:
-                    overallDisp = float(line.split()[2])
+                    overallDisp = float(line.split()[-1])
                 else:
-                    overallDisp = float(line.split()[1])
+                    overallDisp = float(line.split()[-2])
     except UnboundLocalError:
         print("The ISODISTORT output %s is not complete." % LSfile.replace('.cif',\
                 '_ISOmodes.html'))
         modeDict = {}
         overallDisp = None
 
-    return modeDict, overallDisp
+    return modeDict, overallDisp, modeVecDict
+
 
 def compare_modes(HSfile, useAmplimodes=False, parent=False):
     """
@@ -157,6 +164,7 @@ def compare_modes(HSfile, useAmplimodes=False, parent=False):
     x = list(dicts[1].keys()) #Doping values
 
     return x, dicts
+
 
 if __name__ == "__main__":
     #Generate .CIF files
