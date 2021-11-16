@@ -467,7 +467,6 @@ class isodistort:
                 count += 1
                 assert count < 5
 
-
         else:
             self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
                 click()
