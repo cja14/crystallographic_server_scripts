@@ -21,7 +21,7 @@ class isodistort:
 
     def __init__(self, HSfile, silent=True):
         """ Initialise the isodistort object (open connection and load cif) """
-        #Add cwd to HSfile name
+        # Add cwd to HSfile name
         HSfdir = os.getcwd() + '/' + HSfile
 
         # The no fuss script
@@ -73,7 +73,10 @@ class isodistort:
         self.switch_tab(self.basetab)
 
         #Input the low-symmetry .cif file
-        self.driver.find_element_by_name("toProcess").clear()
+        try:
+            self.driver.find_element_by_name("toProcess").clear()
+        except:
+            self.driver.find_element_by_name("toProcess").clear()
         self.driver.find_element_by_name("toProcess").send_keys(LSfdir)
         self.driver.find_element_by_xpath('//FORM[@ACTION="isodistortupload'\
                +'file.php"]/h3/INPUT[@CLASS="btn btn-primary"]').click()
@@ -107,16 +110,39 @@ class isodistort:
 
         #Submit
         self.driver.find_element_by_css_selector("input.btn.btn-primary").click()
-        time.sleep(2)
+        time.sleep(1)
         #Switch tab
         self.amplitudestab = self.driver.window_handles[-1]
         self.switch_tab(self.amplitudestab)
+
+    def save_mode_details(self, LSfile, origin=[0, 0, 0], use_robust=False,
+            robust_val=1, parent=True):
+
+        """
+        This function compares a low-symmetry structure with the given high-
+        symmetry structure and outputs the overall distortion and the mode
+        amplotudes. Method 4 of the ISODISTORT webtool is used.
+
+        Parameters:
+        -----------
+        LSfile: str
+            Name of the .cif file of the low-symmetry structure.
+
+        """
+        # Load low-symmetry structure and change tabs
+        self.load_lowsym_structure(LSfile, origin=origin, use_robust=
+                                   use_robust, robust_val=robust_val)
+
+        with open(LSfile.replace('.cif', '_ISOmodes.html'), "w+") as html:
+                html.write(self.driver.page_source)
+        time.sleep(1)
+
 
     def get_mode_amps(self, LSfile, origin=[0, 0, 0], use_robust=False,
             robust_val=1, saveCif=False, saveModeDetails=True, parent=True,
             vectors=False):
         """
-        This function compare a low-symmetry structure with the given
+        This function compares a low-symmetry structure with the given
         high-symmetry structure and outputs the overall distortion and the mode
         amplitudes. Method 4 of the ISODISTORT web-tool is used.
 
@@ -155,33 +181,34 @@ class isodistort:
                 click()
         self.MDresultstab = self.driver.window_handles[-1]
         self.switch_tab(self.MDresultstab)
-        time.sleep(3)
+        time.sleep(2)
 
         # Save mode details page as a .html file
         if saveModeDetails:
             LSseed = LSfile.strip(".cif")
             with open(LSseed + '_ISOmodes.html', "w+") as html:
                 html.write(self.driver.page_source)
+            time.sleep(1)
+
 
         # Initialise mode dictionary
         modeDict = {}    # Just amplitudes
         modeVecDict = {}  # Order parameter vector
-        fileContents = self.driver.find_element_by_xpath('//div[@class="pad"]/pre')\
-            .text.splitlines()
-
-        # Iterate through lines of mode details page and delimit to mode amps
-        for iLine, line in enumerate(fileContents):
-            if ("mode" in line) and ("Ap" in line):
-                start = iLine + 1
-            elif "Parent-cell strain mode definitions" in line:
-                end = iLine
-
-        modesInfo = fileContents[start:end]
+        modesInfo = self.driver.find_element_by_xpath('//div[@class="pad"]/pre')\
+            .text.split('Parent-cell strain mode definitions\n')[0]\
+            .split('Displacive mode amplitudes\n')[-1]
+        #print(modesInfo)
+            #.\
+            #split('Parent-cell strain mode definitions\n')[0].splitlines()
 
         # Iterate through mode amplitude region
         for _, line in enumerate(modesInfo):
+            if len(line) == 1:
+                continue
             if (line != "") and (" all" not in line) and ("Overall" not in
-                                                          line):
+                                                          line)\
+            and ("mode" not in line):
+                print("Line is: ", line)
                 # Define mode name
                 modeName = line.split()[0].split("]")[1].split('[')[0]
                 # Extract parent or child component of mode vector
@@ -341,7 +368,7 @@ class isodistort:
         them as internal class attributes.
         """
         self.switch_tab(self.amplitudestab, 'amplitudes')
-        time.sleep(2)
+        time.sleep(1)
 
         page = self.driver.page_source
         pagelines = page.split('\n')

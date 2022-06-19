@@ -165,7 +165,3 @@ def compare_modes(HSfile, useAmplimodes=False, parent=False):
 
     return x, dicts
 
-
-if __name__ == "__main__":
-    #Generate .CIF files
-    gen_cif()
