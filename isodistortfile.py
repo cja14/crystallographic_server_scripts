@@ -41,9 +41,9 @@ class isodistort:
         # Initial page (load structure)
         base_url = "https://stokes.byu.edu/iso/isodistort.php"
         self.driver.get(base_url)
-        self.driver.find_element_by_name("toProcess").clear()
-        self.driver.find_element_by_name("toProcess").send_keys(HSfdir)
-        self.driver.find_element_by_css_selector(
+        self.driver.find_element("name", "toProcess").clear()
+        self.driver.find_element("name", "toProcess").send_keys(HSfdir)
+        self.driver.find_element("css selector", 
             "input.btn.btn-primary").click()
         self.basetab = self.driver.window_handles[0]
         self.amplitudestab = None
@@ -74,10 +74,10 @@ class isodistort:
 
         #Input the low-symmetry .cif file
         try:
-            self.driver.find_element_by_name("toProcess").clear()
+            self.driver.find_element("name", "toProcess").clear()
         except:
-            self.driver.find_element_by_name("toProcess").clear()
-        self.driver.find_element_by_name("toProcess").send_keys(LSfdir)
+            self.driver.find_element("name", "toProcess").clear()
+        self.driver.find_element("name", "toProcess").send_keys(LSfdir)
         self.driver.find_element_by_xpath('//FORM[@ACTION="isodistortupload'\
                +'file.php"]/h3/INPUT[@CLASS="btn btn-primary"]').click()
 
@@ -88,7 +88,7 @@ class isodistort:
         #Input parameters if not default and submit
         #Default is to choose first suggested basis relating high- and low-sy-
         #-mmetry structures
-        basis_options = Select(self.driver.find_element_by_name("basisselect")).\
+        basis_options = Select(self.driver.find_element("name", "basisselect")).\
                 options
         basis_options[1].click()
 
@@ -97,19 +97,19 @@ class isodistort:
             self.driver.find_element_by_xpath('//INPUT[@NAME="chooseorigin"' +\
                 ' and @VALUE="true"]').click()
             for i, orig in enumerate(origin):
-                self.driver.find_element_by_name("origin" + str(i+1)).clear()
-                self.driver.find_element_by_name("origin" + str(i+1)).send_keys\
+                self.driver.find_element("name", "origin" + str(i+1)).clear()
+                self.driver.find_element("name", "origin" + str(i+1)).send_keys\
                     (str(origin[i]))
 
         #Wickoff site-matching method
         if use_robust:
             self.driver.find_element_by_xpath('//INPUT[@NAME="trynearest" and ' + \
                 '@VALUE="false"]').click()
-            self.driver.find_element_by_name("dmax").clear()
-            self.driver.find_element_by_name("dmax").send_keys(str(robust_val))
+            self.driver.find_element("name", "dmax").clear()
+            self.driver.find_element("name", "dmax").send_keys(str(robust_val))
 
         #Submit
-        self.driver.find_element_by_css_selector("input.btn.btn-primary").click()
+        self.driver.find_element("css selector", "input.btn.btn-primary").click()
         time.sleep(1)
         #Switch tab
         self.amplitudestab = self.driver.window_handles[-1]
@@ -170,14 +170,14 @@ class isodistort:
         if saveCif:
             self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
                     click()
-            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+            self.driver.find_element("css selector", "input.btn.btn-primary").\
                     click()
 
         #Get modes and amplitudes
         #Change to window with modes details
         self.driver.find_element_by_xpath('//INPUT[@VALUE="modesdetails"]').\
                 click()
-        self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+        self.driver.find_element("css selector", "input.btn.btn-primary").\
                 click()
         self.MDresultstab = self.driver.window_handles[-1]
         self.switch_tab(self.MDresultstab)
@@ -266,7 +266,7 @@ class isodistort:
         for i, irrep in enumerate(irreps):
             kpt = kpoints[irrep]
             name = "kvec"+str(i+1)
-            elem = Select(self.driver.find_element_by_name(name))
+            elem = Select(self.driver.find_element("name", name))
             options = elem.options
             for j, opt in enumerate(options):
                 if opt.text[:len(kpt)] == kpt:
@@ -282,14 +282,14 @@ class isodistort:
         # Choose irreps
         for i, irrep in enumerate(irreps):
             name = "irrep"+str(i+1)
-            elem = Select(self.driver.find_element_by_name(name))
+            elem = Select(self.driver.find_element("name", name))
             options = elem.options
             for j, opt in enumerate(options):
                 if opt.text[:len(irrep)] == irrep:
                     opt.click()
                     break
 
-        elems = self.driver.find_elements_by_css_selector(
+        elems = self.driver.find_elements("css selector",
             "input.btn.btn-primary")
         elems[0].click()
 
@@ -310,12 +310,12 @@ class isodistort:
         self.switch_tab(self.basetab, 'base')
 
         # Select target child space group from list
-        elem = Select(self.driver.find_element_by_name("subgroupsym"))
+        elem = Select(self.driver.find_element("name", "subgroupsym"))
         options = elem.options
         opt = options[int(SG)]  # 0 is "Not selected"
         opt.click()
 
-        elems = self.driver.find_elements_by_css_selector(
+        elems = self.driver.find_elements('css selector',
             "input.btn.btn-primary")
         elems[4].click()
 
@@ -347,7 +347,7 @@ class isodistort:
             elem = elems[list_id]
         elem.click()
 
-        self.driver.find_element_by_css_selector(
+        self.driver.find_element("css selector", 
             "input.btn.btn-primary").click()
 
         # Changing tabs again
@@ -436,7 +436,7 @@ class isodistort:
             elemnames = self.modenames[irrep]
             for i, name in enumerate(elemnames):
                 try:
-                    elem = self.driver.find_element_by_name(name)
+                    elem = self.driver.find_element("name", name)
                     elem.clear()
                     elem.send_keys('{:.8f}'.format(dispvec[i]))
                 except NoSuchElementException:
@@ -463,7 +463,7 @@ class isodistort:
             # Save CIF file (default 'subgroup_cif.txt' filename will be used)
             self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]'
                                               ).click()
-            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+            self.driver.find_element("css selector", "input.btn.btn-primary").\
                 click()
             time.sleep(2)
 
@@ -480,7 +480,7 @@ class isodistort:
                 print("File {} is empty.\n Will delete and try again".format
                       ('subgroup_cif.txt'))
                 # Re-download subgroup_cif.txt
-                self.driver.find_element_by_css_selector(
+                self.driver.find_element("css selector", 
                         "input.btn.btn-primary").click()
                 time.sleep(1)
                 count += 1
@@ -497,7 +497,7 @@ class isodistort:
         else:
             self.driver.find_element_by_xpath('//INPUT[@VALUE="structurefile"]').\
                 click()
-            self.driver.find_element_by_css_selector("input.btn.btn-primary").\
+            self.driver.find_element("css selector", "input.btn.btn-primary").\
                 click()
 
         if close:
